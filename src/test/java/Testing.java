@@ -116,7 +116,6 @@ public class Testing {
                 result.getColumnDefinitions().asList().stream()
                         .map(cl -> cl.getName())
                         .collect(Collectors.toList());
-
         assertEquals(columnNames.size(), 3);
         assertTrue(columnNames.contains("accountid"));
         assertTrue(columnNames.contains("name"));
