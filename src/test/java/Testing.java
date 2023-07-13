@@ -116,17 +116,25 @@ public class Testing {
                 result.getColumnDefinitions().asList().stream()
                         .map(cl -> cl.getName())
                         .collect(Collectors.toList());
-        
+
         assertEquals(columnNames.size(), 3);
         assertTrue(columnNames.contains("accountid"));
         assertTrue(columnNames.contains("name"));
         assertTrue(columnNames.contains("balance"));
-        AccountDetails accountDetails = new AccountDetails(1,"ram",1212);
+        AccountDetails accountDetails = new AccountDetails(1,"ram",12);
         schemaRepository.insertRow("accountdetails", accountDetails);
-        AccountDetails testad = schemaRepository.selectRow("accountdetails",1);
-        String jsonstring = schemaRepository.convertToJson(testad);
+        AccountDetails accountDetails2 = new AccountDetails(2,"sam",13);
+        schemaRepository.insertRow("accountdetails", accountDetails2);
+        AccountDetails accountDetails3 = new AccountDetails(3,"joe",14);
+        schemaRepository.insertRow("accountdetails", accountDetails3);
         schemaRepository.createfile("C:\\JPMC project\\test.txt");
-        schemaRepository.writefile("C:\\JPMC project\\test.txt",jsonstring);
+        String jsonstring = "";
+        for(int i=1; i<=3;i++){
+            AccountDetails testad = schemaRepository.selectRow("accountdetails", i);
+            jsonstring += schemaRepository.convertToJson(testad) + "\n";
+            schemaRepository.writefile("C:\\JPMC project\\test.txt",jsonstring);
+        }
+
 
 
     }

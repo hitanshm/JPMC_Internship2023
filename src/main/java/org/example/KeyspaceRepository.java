@@ -61,9 +61,9 @@ public class KeyspaceRepository {
 
         session.execute(query);
     }
-    public AccountDetails selectRow(String tableName, int id) {
-        StringBuilder sb = new StringBuilder("select * from ").append(keyspace).append(".").append(tableName)
-                .append(" where accountid=").append(id).append(";");
+    public AccountDetails selectRow(String tableName, int accountid) {
+        StringBuilder sb = new StringBuilder("select * from ").append(keyspace).append(".")
+                .append(tableName).append(" WHERE accountid=").append(accountid).append(";");
 
         final String query = sb.toString();
 
@@ -99,7 +99,4 @@ public class KeyspaceRepository {
             e.printStackTrace();
         }
     }
-
-
-
 }
