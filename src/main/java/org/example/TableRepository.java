@@ -2,10 +2,10 @@ package org.example;
 
 import com.datastax.driver.core.Session;
 
-public class Create_Table {
+public class TableRepository {
     private Session session;
 
-    public Create_Table(Session session) {
+    public TableRepository(Session session) {
         this.session = session;
     }
 
