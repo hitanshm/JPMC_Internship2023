@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CassandraTest {
+public class Testing {
     private Session session;
     private KeyspaceRepository schemaRepository;
     @Before
@@ -40,9 +40,9 @@ public class CassandraTest {
         assertTrue(columnNames.contains("accountid"));
         assertTrue(columnNames.contains("name"));
         assertTrue(columnNames.contains("balance"));
-        AccountDetails accountDetails = new AccountDetails(1,"ram",1212);
+        DataStorage accountDetails = new DataStorage(1,"ram",1212);
         schemaRepository.insertRow("accountdetails", accountDetails);
-        AccountDetails testad = schemaRepository.selectRow("accountdetails",1);
+        DataStorage testad = schemaRepository.selectRow("accountdetails",1);
         String jsonstring = schemaRepository.convertToJson(testad);
         schemaRepository.createfile("C:\\JPMC\\CassandraTest.txt");
         schemaRepository.writefile("C:\\JPMC\\CassandraTest.txt",jsonstring);

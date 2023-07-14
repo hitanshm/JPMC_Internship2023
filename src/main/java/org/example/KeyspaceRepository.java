@@ -50,16 +50,16 @@ public class KeyspaceRepository {
 
         session.execute(query);
     }
-    public void insertRow(String tableName, AccountDetails accountDetails) {
+    public void insertRow(String tableName, DataStorage accountDetails) {
         StringBuilder sb = new StringBuilder("insert into ").append(keyspace).append(".").append(tableName)
                 .append(" (").append("accountid").append(",").append("name").append(",").append("balance").append(") values (")
-                .append(accountDetails.accountId).append(",'").append(accountDetails.name).append("',").append(accountDetails.balance).append(") IF NOT EXISTS;");
+                .append(accountDetails.accountid).append(",'").append(accountDetails.name).append("',").append(accountDetails.balance).append(") IF NOT EXISTS;");
 
         final String query = sb.toString();
 
         session.execute(query);
     }
-    public AccountDetails selectRow(String tableName, int id) {
+    public DataStorage selectRow(String tableName, int id) {
         StringBuilder sb = new StringBuilder("select * from ").append(keyspace).append(".").append(tableName)
                 .append(" where accountid=").append(id).append(";");
 
@@ -67,10 +67,10 @@ public class KeyspaceRepository {
 
         ResultSet result = session.execute(query);
         Row row = result.one();
-        AccountDetails ad = new AccountDetails(row.getInt("accountId"), row.getString("name"),row.getInt("balance"));
+        DataStorage ad = new DataStorage(row.getInt("accountid"), row.getString("name"),row.getInt("balance"));
         return ad;
     }
-    public String convertToJson(AccountDetails accountDetails){
+    public String convertToJson(DataStorage accountDetails){
         return new Gson().toJson(accountDetails);
     }
     public void createfile(String name){

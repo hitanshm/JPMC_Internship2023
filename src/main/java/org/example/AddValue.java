@@ -2,7 +2,7 @@ package org.example;
 
 import com.datastax.driver.core.Session;
 
-public class Insertvalue {
+public class AddValue {
     private String tableName;
     private String keyspace;
     private String column1;
@@ -11,7 +11,7 @@ public class Insertvalue {
     private String name;
     private Session session;
 
-    public Insertvalue(Session session, String keyspace, String tableName, String column1, String column2, String id, String name){
+    public AddValue(Session session, String keyspace, String tableName, String column1, String column2, String id, String name){
         this.keyspace=keyspace;
         this.tableName=tableName;
         this.column1=column1;
