@@ -55,8 +55,5 @@ public class Testing {
             jsonstring += schemaRepository.convertToJson(testad) + "\n";
             schemaRepository.writefile("C:\\Coding\\test.txt",jsonstring);
         }
-
-
-
     }
 }
