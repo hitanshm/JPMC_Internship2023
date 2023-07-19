@@ -43,8 +43,8 @@ public class Testing {
 
         SampleTable testad = schemaRepository.selectRow("student");
         String jsonstring = schemaRepository.convertToJson(testad);
-        schemaRepository.createfile("C:\\JPMC_Internship_2023\\test.txt");
-        schemaRepository.writefile("C:\\JPMC_Internship_2023\\test.txt",jsonstring);
+        schemaRepository.createfile("C:\\JPMC_Internship_2023\\test2.txt");
+        schemaRepository.writefile("C:\\JPMC_Internship_2023\\test2.txt",jsonstring);
 
 
         System.out.println("Process has ran successfully.");
