@@ -8,10 +8,17 @@ import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class CreateS3Folder {
+    public static String date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd" ) );
+    public static String folderName = date + "/";
     public static void main(String[] args) {
         String bucketName = "chetan-test-bucket-1";
-        String folderName = "test-folder-1/";
+
+        //String folderName = date + "/";
 
         S3Client client = S3Client.builder().build();
 
