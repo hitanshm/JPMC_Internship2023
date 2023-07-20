@@ -43,7 +43,7 @@ public class Testing {
         assertTrue(columnNames.contains("accountid"));
         assertTrue(columnNames.contains("name"));
         assertTrue(columnNames.contains("balance"));
-        DataStorage accountDetails = new DataStorage(1,"ram",100);
+        DataStorage accountDetails = new DataStorage(1,"ram",1212);
         schemaRepository.insertRow("accountdetails", accountDetails);
         DataStorage accountDetails2 = new DataStorage(2,"bam",200);
         schemaRepository.insertRow("accountdetails", accountDetails2);
