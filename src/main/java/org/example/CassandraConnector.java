@@ -8,7 +8,7 @@ public class CassandraConnector {
     private Cluster cluster;
 
     private Session session;
-
+    //Connecting Cassandra
     public void connect(String node, Integer port, String user, String password) {
         Cluster.Builder b = Cluster.builder().addContactPoint(node).withCredentials(user, password);
         if (port != null) {
@@ -20,6 +20,7 @@ public class CassandraConnector {
     }
 
     public Session getSession() {
+
         return this.session;
     }
 

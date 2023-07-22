@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class Testing {
-    private Session session;
+
 
     /*private KeyspaceRepository schemaRepository;
 
@@ -69,9 +69,7 @@ public class Testing {
         assertEquals(columnNames.size(), 2);
         assertTrue(columnNames.contains("id"));
         assertTrue(columnNames.contains("name"));
-
     }
-
     private Insertvalue schemaRepository;
     @Before
     public void connect() {
@@ -96,7 +94,9 @@ public class Testing {
         assertEquals(rows.size(), 5);
         }
         */
+    private Session session;
     private KeyspaceRepository schemaRepository;
+    //Connecting with a local computer node and default port with username and password
     @Before
     public void connect() {
         CassandraConnector client = new CassandraConnector();
@@ -105,36 +105,38 @@ public class Testing {
         schemaRepository = new KeyspaceRepository("library",session);
     }
     @Test
-    public void whenInsertingATable_thenInsertedCorrectly() {
+    public void testingCassandra() {
 
         schemaRepository.createTable("accountdetails", "accountid","int","name","text", "balance","int");
 
         ResultSet result = session.execute(
                 "SELECT * FROM " + "library" + ".accountdetails;");
 
+        //gets the column names of the table
         List<String> columnNames =
                 result.getColumnDefinitions().asList().stream()
                         .map(cl -> cl.getName())
                         .collect(Collectors.toList());
-
+        //checks if the table has the right number of columns and names
         assertEquals(columnNames.size(), 3);
         assertTrue(columnNames.contains("accountid"));
         assertTrue(columnNames.contains("name"));
         assertTrue(columnNames.contains("balance"));
-        AccountDetails accountDetails = new AccountDetails(1,"ram",12);
+        //create an object with column details and inserts it into the table
+        AccountDetails accountDetails = new AccountDetails(1,"john",1246);
         schemaRepository.insertRow("accountdetails", accountDetails);
-        AccountDetails accountDetails2 = new AccountDetails(2,"sam",13);
+        AccountDetails accountDetails2 = new AccountDetails(2,"sam",13076);
         schemaRepository.insertRow("accountdetails", accountDetails2);
-        AccountDetails accountDetails3 = new AccountDetails(3,"joe",14);
+        AccountDetails accountDetails3 = new AccountDetails(3,"joe",14246);
         schemaRepository.insertRow("accountdetails", accountDetails3);
-        schemaRepository.createfile("C:\\JPMC project\\test.txt");
+        //creates a file on my local computer
+        schemaRepository.createfile("C:\\JPMC project\\accountdetails.txt");
         String jsonstring = "";
         for(int i=1; i<=3;i++){
             AccountDetails testad = schemaRepository.selectRow("accountdetails", i);
             jsonstring += schemaRepository.convertToJson(testad) + "\n";
-            schemaRepository.writefile("C:\\JPMC project\\test.txt",jsonstring);
+            schemaRepository.writefile("C:\\JPMC project\\accountdetails.txt",jsonstring);
         }
-
 
 
     }

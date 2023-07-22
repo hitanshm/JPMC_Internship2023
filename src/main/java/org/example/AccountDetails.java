@@ -1,12 +1,19 @@
 package org.example;
 
 public class AccountDetails {
+    //make private
     public int accountId;
     public String name;
     public int balance;
-    public AccountDetails(int accountId, String name, int balance){
-        this.accountId=accountId;
-        this.name=name;
-        this.balance=balance;
+    //have different names for argument
+    public AccountDetails(int accId, String nm, int bal){
+        accountId=accId;
+        name=nm;
+        balance=bal;
     }
+
+    public int getAccountId() {
+        return accountId;
+    }
+    //make get functions and set
 }
