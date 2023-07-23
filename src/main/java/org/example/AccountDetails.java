@@ -1,5 +1,7 @@
 package org.example;
 
+import jnr.ffi.annotations.In;
+
 public class AccountDetails {
     //make private
     public int accountId;
@@ -14,6 +16,10 @@ public class AccountDetails {
 
     public int getAccountId() {
         return accountId;
+    }
+
+    public String toString() {
+        return accountId + " " + name + " " + balance;
     }
     //make get functions and set
 }

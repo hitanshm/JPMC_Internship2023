@@ -91,7 +91,11 @@ public class KeyspaceRepository {
         //Getting the ResultSet
         ResultSet result = session.execute(query);
 
-        System.out.println(result.all());
+        List<AccountDetails> accountDetails = result.all()
+                .stream()
+                .map(row -> new AccountDetails(row.getInt("accountId"), row.getString("name"),row.getInt("balance")))
+                        .collect(Collectors.toList());
+        System.out.println(accountDetails);
 }
     public String convertToJson(AccountDetails accountDetails){
 
