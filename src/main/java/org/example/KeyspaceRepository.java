@@ -79,7 +79,7 @@ public class KeyspaceRepository {
         //return ad;
     }
 
-    public void getTable(String tableName) {
+    public List<AccountDetails> getTable(String tableName) {
         String query = "SELECT * FROM" + " accountdetails";
 
         //Creating Cluster object
@@ -95,9 +95,9 @@ public class KeyspaceRepository {
                 .stream()
                 .map(row -> new AccountDetails(row.getInt("accountId"), row.getString("name"),row.getInt("balance")))
                         .collect(Collectors.toList());
-        System.out.println(accountDetails);
+        return accountDetails;
 }
-    public String convertToJson(AccountDetails accountDetails){
+    public String convertToJson(List<AccountDetails> accountDetails){
 
         return new Gson().toJson(accountDetails);
     }

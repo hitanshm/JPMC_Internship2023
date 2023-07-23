@@ -138,7 +138,8 @@ public class Testing {
             jsonstring += schemaRepository.convertToJson(testad) + "\n";
             schemaRepository.writefile("C:\\JPMC project\\accountdetails.txt",jsonstring);
         }*/
-        schemaRepository.getTable("accountdetails");
+        List<AccountDetails> tableData = schemaRepository.getTable("accountdetails");
+        System.out.println(schemaRepository.convertToJson(tableData));
 
 
     }
