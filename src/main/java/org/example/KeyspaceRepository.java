@@ -94,9 +94,20 @@ public class KeyspaceRepository {
         List<AccountDetails> accountDetails = result.all()
                 .stream()
                 .map(row -> new AccountDetails(row.getInt("accountId"), row.getString("name"),row.getInt("balance")))
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
         return accountDetails;
 }
+public ResultSet getAllFromTable(CassandraTable table){
+        String query = "SELECT * FROM " + table.getTableName();
+        //Creating Cluster object
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
+        //Creating Session object
+        Session session = cluster.connect("library");
+        //Getting the ResultSet
+        ResultSet result = session.execute(query);
+        return result;
+    }
+
     public String convertToJson(List<AccountDetails> accountDetails){
 
         return new Gson().toJson(accountDetails);

@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -138,9 +139,13 @@ public class Testing {
             jsonstring += schemaRepository.convertToJson(testad) + "\n";
             schemaRepository.writefile("C:\\JPMC project\\accountdetails.txt",jsonstring);
         }*/
-        List<AccountDetails> tableData = schemaRepository.getTable("accountdetails");
-        System.out.println(schemaRepository.convertToJson(tableData));
-
-
+        //List<AccountDetails> tableData = schemaRepository.getTable("accountdetails");
+        //System.out.println(schemaRepository.convertToJson(tableData));
+        ArrayList<String> cn = new ArrayList<String>();
+        cn.add("accountid");
+        cn.add("name");
+        cn.add("balance");
+        CassandraTable table = new CassandraTable("accountdetails",cn);
+        System.out.println(schemaRepository.getAllFromTable(table).all());
     }
 }

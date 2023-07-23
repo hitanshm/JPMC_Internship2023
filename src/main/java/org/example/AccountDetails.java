@@ -1,7 +1,5 @@
 package org.example;
 
-import jnr.ffi.annotations.In;
-
 public class AccountDetails {
     //make private
     public int accountId;
