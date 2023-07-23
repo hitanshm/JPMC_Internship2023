@@ -1,3 +1,4 @@
+import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
@@ -132,11 +133,12 @@ public class Testing {
         //creates a file on my local computer
         schemaRepository.createfile("C:\\JPMC project\\accountdetails.txt");
         String jsonstring = "";
-        for(int i=1; i<=3;i++){
+        /*for(int i=1; i<=3;i++){
             AccountDetails testad = schemaRepository.selectRow("accountdetails", i);
             jsonstring += schemaRepository.convertToJson(testad) + "\n";
             schemaRepository.writefile("C:\\JPMC project\\accountdetails.txt",jsonstring);
-        }
+        }*/
+        schemaRepository.getTable("accountdetails");
 
 
     }
