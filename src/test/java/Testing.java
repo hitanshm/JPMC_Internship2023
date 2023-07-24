@@ -146,6 +146,8 @@ public class Testing {
         cn.add("name");
         cn.add("balance");
         CassandraTable table = new CassandraTable("accountdetails",cn);
+        //System.out.println(table.getColumnNames());
+        System.out.println(schemaRepository.getAllColumnsFromTable(table));
         System.out.println(schemaRepository.getAllFromTable(table).all());
     }
 }

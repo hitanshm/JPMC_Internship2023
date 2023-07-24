@@ -97,6 +97,20 @@ public class KeyspaceRepository {
                 .collect(Collectors.toList());
         return accountDetails;
 }
+    public List<String> getAllColumnsFromTable(CassandraTable table){
+        String query = "SELECT * FROM " + table.getTableName();
+        //Creating Cluster object
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
+        //Creating Session object
+        Session session = cluster.connect("library");
+        //Getting the ResultSet
+        ResultSet result = session.execute(query);
+        List<String> columnNames =
+                result.getColumnDefinitions().asList().stream()
+                        .map(cl -> cl.getName())
+                        .collect(Collectors.toList());
+        return columnNames;
+    }
 public ResultSet getAllFromTable(CassandraTable table){
         String query = "SELECT * FROM " + table.getTableName();
         //Creating Cluster object
@@ -112,6 +126,7 @@ public ResultSet getAllFromTable(CassandraTable table){
 
         return new Gson().toJson(accountDetails);
     }
+    public String
     public void createfile(String name){
         try {
             File myObj = new File(name);

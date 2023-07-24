@@ -12,4 +12,7 @@ public class CassandraTable {
     public String getTableName(){
         return tableName;
     }
+    public ArrayList<String> getColumnNames(){
+        return columnNames;
+    }
 }
