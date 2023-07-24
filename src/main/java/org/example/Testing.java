@@ -1,16 +1,25 @@
 package org.example;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import org.apache.cassandra.cql3.Json;
 import org.example.CassandraConnector;
 import org.example.KeyspaceRepository;
 import org.example.SampleTable;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.example.JsonS3;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static javafx.application.Platform.exit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -54,12 +63,22 @@ public class Testing {
     }
 
     public static void main(String[] args){
+        String bucketName = "chetan-test-bucket-1";
+        String keyName = CreateS3Folder.folderName + "test.txt";
+        String filePath = "C:\\JPMC_Internship_2023\\test.txt";
+        String long_date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd_HH_mm_ss" ) );
+        String date_compressed = long_date.substring(0,10);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
         Testing obj = new Testing();
         System.out.println("Main has ran.");
 
         obj.connect();
 
         obj.whenCreatingAKeyspace_thenCreated();
+
+        JsonS3.logic(date_compressed, bucketName, keyName, filePath, s3Client);
+
+        System.exit(0);
     }
 
     //@Before
