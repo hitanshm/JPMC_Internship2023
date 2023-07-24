@@ -9,4 +9,7 @@ public class DataStorage {
         this.name=name;
         this.balance=balance;
     }
+    public String toString() {
+        return accountid + " " + name + " " + balance;
+    }
 }
