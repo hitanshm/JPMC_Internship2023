@@ -27,7 +27,7 @@ public class JsonS3 {
             PutObjectRequest request = new PutObjectRequest(bucketName, keyName, new File(filePath));
             s3Client.putObject(request);
 
-            System.out.println("JSON file stored in Amazon S3!");
+            System.out.println("JSON file stored in Amazon S3 under the folder " + CreateS3Folder.date);
         } else{
             System.out.println("ERROR: The folder matching today's timestamp does not exist! Please run CreateS3Folder.java first.");
         }

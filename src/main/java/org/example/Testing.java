@@ -1,3 +1,5 @@
+package org.example;
+
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import org.example.CassandraConnector;
@@ -16,16 +18,16 @@ public class Testing {
     private KeyspaceRepository schemaRepository;
     private Session session;
 
-    @Before
-    public void connect() {
+    private void connect() {
+        //String hello = "Hello";
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042);
         this.session = client.getSession();
         schemaRepository = new KeyspaceRepository(session);
     }
 
-    @Test
-    public void whenCreatingAKeyspace_thenCreated() {
+
+    private void whenCreatingAKeyspace_thenCreated() {
         String keyspaceName = "test3";
         schemaRepository.createKeyspace(keyspaceName, "SimpleStrategy", 1);
 
@@ -43,13 +45,28 @@ public class Testing {
 
         SampleTable testad = schemaRepository.selectRow("student");
         String jsonstring = schemaRepository.convertToJson(testad);
-        schemaRepository.createfile("C:\\JPMC_Internship_2023\\test2.txt");
-        schemaRepository.writefile("C:\\JPMC_Internship_2023\\test2.txt",jsonstring);
+        schemaRepository.createfile("C:\\JPMC_Internship_2023\\test3.txt");
+        schemaRepository.writefile("C:\\JPMC_Internship_2023\\test3.txt",jsonstring);
 
 
         System.out.println("Process has ran successfully.");
 
     }
+
+    public static void main(String[] args){
+        Testing obj = new Testing();
+        System.out.println("Main has ran.");
+
+        obj.connect();
+
+        obj.whenCreatingAKeyspace_thenCreated();
+    }
+
+    //@Before
+
+
+
+
 
 
 }
