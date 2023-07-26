@@ -1,9 +1,6 @@
 package org.example;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.avro.generic.GenericData;
@@ -19,10 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class KeyspaceRepository {
@@ -196,6 +190,18 @@ public ResultSet getAllFromTable(CassandraTable table){
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private ArrayList<String> table_names = new ArrayList<String>();
+    public ArrayList<String> getTableNames(){
+    Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh","hitansh").build();
+    Metadata metadata = cluster.getMetadata();
+    Iterator<TableMetadata> tm = metadata.getKeyspace("library").getTables().iterator();
+
+        while (tm.hasNext()){
+        TableMetadata t = tm.next();
+        table_names.add(t.getName());
+    }
+        return table_names;
     }
 
     public void createfile(String name){

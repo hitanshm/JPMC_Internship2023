@@ -1,13 +1,14 @@
 package org.example;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MultithreadingCass extends Thread {
+    private ArrayList<String> table_names = new ArrayList<String>();
+
     private int threadNumber;
     private String tableName;
     public MultithreadingCass(int threadNum, String tableNm){
@@ -30,6 +31,7 @@ public class MultithreadingCass extends Thread {
 
     @Override
 public void run(){
+
 
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042, "hitansh", "hitansh");
