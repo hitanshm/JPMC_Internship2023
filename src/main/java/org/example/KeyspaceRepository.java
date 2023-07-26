@@ -126,7 +126,7 @@ public ResultSet getAllFromTable(CassandraTable table){
 
         return new Gson().toJson(accountDetails);
     }
-    public String
+
     public void createfile(String name){
         try {
             File myObj = new File(name);
