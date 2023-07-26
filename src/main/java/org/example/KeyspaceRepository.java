@@ -5,12 +5,24 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.apache.avro.generic.GenericData;
+import org.apache.hadoop.fs.Path;
+import org.apache.parquet.avro.AvroParquetWriter;
+import org.apache.parquet.hadoop.ParquetFileWriter;
+import org.apache.parquet.hadoop.ParquetWriter;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.json.simple.JSONObject;
 
+import org.apache.avro.Schema;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class KeyspaceRepository {
@@ -122,9 +134,68 @@ public ResultSet getAllFromTable(CassandraTable table){
         return result;
     }
 
-    public String convertToJson(List<AccountDetails> accountDetails){
-
-        return new Gson().toJson(accountDetails);
+    public String convertToJson(List<Row> rs){
+        return new Gson().toJson(rs);
+    }
+    public String RowsToJson(List<Row> rows, List<String> columns) {
+        List<String> json = new ArrayList<>();
+        for (Row row : rows) {
+            HashMap<String, Object> map = new HashMap<>();
+            for (String column : columns) {
+                map.put(column, row.getObject(column));
+            }
+            Gson gson = new Gson();
+            Type typeObject = new TypeToken<HashMap>() {}.getType();
+            String gsonData = gson.toJson(map, typeObject);
+            json.add(gsonData);
+        }
+        return json.toString();
+    }
+    public List<Map<String, Object>> RowsToMList(List<Row> rows, List<String> columns) {
+        List<Map<String, Object>> mList = new ArrayList<>();
+        for (Row row : rows) {
+            HashMap<String, Object> map = new HashMap<>();
+            for (String column : columns) {
+                map.put(column, row.getObject(column));
+            }
+            mList.add(map);
+        }
+        return mList;
+    }
+    public static void parquetWriter(List<Map<String, Object>> mList) {
+        String tmpPath = "blah.parquet";
+        Schema schema = null;
+        schema = new Schema.Parser().parse( "{\n" +
+                "  \"type\": \"record\",\n" +
+                "  \"name\": \"myrecord\",\n" +
+                "  \"fields\": [ {\n" +
+                "    \"name\": \"mymap\",\n" +
+                "    \"type\": {\n" +
+                "      \"type\": \"map\",\n" +
+                "      \"values\": \"int\"\n" +
+                "    }\n" +
+                "  } ]\n" +
+                "}" );
+        try (ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(new Path(tmpPath))
+                .withCompressionCodec(CompressionCodecName.SNAPPY)
+                .withSchema(schema)
+                .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
+                .build()) {
+            List<GenericData.Record> recordList = new ArrayList<>();
+            GenericData.Record record = new GenericData.Record(schema);
+            mList.forEach((d) -> {
+                try {
+                    d.forEach((K, V) -> {
+                        record.put(K, V);
+                    });
+                    writer.write(record);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void createfile(String name){

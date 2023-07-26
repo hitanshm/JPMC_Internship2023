@@ -8,7 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -104,7 +106,7 @@ public class Testing {
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042, "hitansh", "hitansh");
         this.session = client.getSession();
-        schemaRepository = new KeyspaceRepository("library",session);
+        schemaRepository = new KeyspaceRepository("library", session);
     }
     @Test
     public void testingCassandra() {
@@ -141,13 +143,31 @@ public class Testing {
         }*/
         //List<AccountDetails> tableData = schemaRepository.getTable("accountdetails");
         //System.out.println(schemaRepository.convertToJson(tableData));
-        ArrayList<String> cn = new ArrayList<String>();
-        cn.add("accountid");
-        cn.add("name");
-        cn.add("balance");
-        CassandraTable table = new CassandraTable("accountdetails",cn);
+        CassandraTable table = new CassandraTable("accountdetails");
         //System.out.println(table.getColumnNames());
-        System.out.println(schemaRepository.getAllColumnsFromTable(table));
-        System.out.println(schemaRepository.getAllFromTable(table).all());
+        //System.out.println(schemaRepository.getAllColumnsFromTable(table));
+        //List<Row> rs =schemaRepository.getAllFromTable(table).all();
+        //System.out.println(schemaRepository.convertToJson(rs));
+        //System.out.println(table.getColumnNames());
+//        System.out.println(schemaRepository.getAllColumnsFromTable(table));
+//        System.out.println(schemaRepository.getAllFromTable(table).all());
+        System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
+               schemaRepository.getAllColumnsFromTable(table)));
+        List<Map<String, Object>> test= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
+        KeyspaceRepository.parquetWriter(test);
+    }
+    @Test
+    public void testParquet() {
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        Map<String, Object> mp = new HashMap<>();
+        mp.put("A", 1);
+        mp.put("B", "AB");
+        Map<String, Object> mp2 = new HashMap<>();
+        mp2.put("A", 2);
+        mp2.put("B", "ABC");
+        mapList.add(mp);
+        mapList.add(mp2);
+        KeyspaceRepository.parquetWriter(mapList);
     }
 }
+
