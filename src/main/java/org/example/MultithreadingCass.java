@@ -18,20 +18,8 @@ public class MultithreadingCass extends Thread {
     private Session session;
     private KeyspaceRepository schemaRepository;
 
-    public List<Row> getTables() {
-        ResultSet tables = session.execute("select table_name from system_schema.tables WHERE keyspace_name = '" + "library" + "'");
-        return tables.all();
-    }
-    public ArrayList<String> tableList(){
-        ArrayList<String> tn = new ArrayList<String>();
-        tn.add("accountdetails");
-        tn.add("testtable");
-        return tn;
-    }
-
     @Override
 public void run(){
-
 
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042, "hitansh", "hitansh");

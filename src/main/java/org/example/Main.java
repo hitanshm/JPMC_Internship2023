@@ -18,7 +18,7 @@ public class Main {
             TableMetadata t = tm.next();
             table_names.add(t.getName());
         }
-            for (int i = 0; i < table_names.toArray().length; i++) {
+            for (int i = 0; i < table_names.size(); i++) {
                 MultithreadingCass multitest = new MultithreadingCass(i, table_names.get(i));
                 multitest.start();
             }
