@@ -69,40 +69,40 @@ public class KeyspaceRepository {
 
         session.execute(query);
     }
+    /*
+        public void selectRow(String tableName, int accountid) {
+            StringBuilder sb = new StringBuilder("select * from ").append(keyspace).append(".")
+                    .append(tableName).append(" WHERE accountid=").append(accountid).append(";");
 
-    public void selectRow(String tableName, int accountid) {
-        StringBuilder sb = new StringBuilder("select * from ").append(keyspace).append(".")
-                .append(tableName).append(" WHERE accountid=").append(accountid).append(";");
+            final String query = sb.toString();
 
-        final String query = sb.toString();
+            ResultSet result = session.execute(query);
+            //make loop until row ends similar to result.next
+            List<Row> row = result.all();
+            row.isEmpty();
 
-        ResultSet result = session.execute(query);
-        //make loop until row ends similar to result.next
-        List<Row> row = result.all();
-        row.isEmpty();
+            //AccountDetails ad = new AccountDetails(row.get("accountId"), row.getString("name"), row.getInt("balance"));
+            //return ad;
+        }
 
-        //AccountDetails ad = new AccountDetails(row.get("accountId"), row.getString("name"), row.getInt("balance"));
-        //return ad;
-    }
+        public List<AccountDetails> getTable(String tableName) {
+            String query = "SELECT * FROM" + " accountdetails";
 
-    public List<AccountDetails> getTable(String tableName) {
-        String query = "SELECT * FROM" + " accountdetails";
+            //Creating Cluster object
+            Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
 
-        //Creating Cluster object
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
+            //Creating Session object
+            Session session = cluster.connect("library");
 
-        //Creating Session object
-        Session session = cluster.connect("library");
+            //Getting the ResultSet
+            ResultSet result = session.execute(query);
 
-        //Getting the ResultSet
-        ResultSet result = session.execute(query);
-
-        List<AccountDetails> accountDetails = result.all()
-                .stream()
-                .map(row -> new AccountDetails(row.getInt("accountId"), row.getString("name"),row.getInt("balance")))
-                .collect(Collectors.toList());
-        return accountDetails;
-}
+            List<AccountDetails> accountDetails = result.all()
+                    .stream()
+                    .map(row -> new AccountDetails(row.getInt("accountId"), row.getString("name"),row.getInt("balance")))
+                    .collect(Collectors.toList());
+            return accountDetails;
+    }*/
     public List<String> getAllColumnsFromTable(CassandraTable table){
         String query = "SELECT * FROM " + table.getTableName();
         //Creating Cluster object
@@ -128,9 +128,9 @@ public ResultSet getAllFromTable(CassandraTable table){
         return result;
     }
 
-    public String convertToJson(List<Row> rs){
+    /*public String convertToJson(List<Row> rs){
         return new Gson().toJson(rs);
-    }
+    }*/
     public String RowsToJson(List<Row> rows, List<String> columns) {
         List<String> json = new ArrayList<>();
         for (Row row : rows) {
