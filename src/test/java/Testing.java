@@ -153,8 +153,8 @@ public class Testing {
 //        System.out.println(schemaRepository.getAllFromTable(table).all());
         System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
                schemaRepository.getAllColumnsFromTable(table)));
-        List<Map<String, Object>> test= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
-        KeyspaceRepository.parquetWriter(test);
+        List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
+        KeyspaceRepository.parquetWriter(testParquet);
     }
     @Test
     public void testParquet() {

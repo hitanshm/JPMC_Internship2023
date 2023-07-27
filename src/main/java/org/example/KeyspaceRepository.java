@@ -196,7 +196,6 @@ public ResultSet getAllFromTable(CassandraTable table){
     Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh","hitansh").build();
     Metadata metadata = cluster.getMetadata();
     Iterator<TableMetadata> tm = metadata.getKeyspace("library").getTables().iterator();
-
         while (tm.hasNext()){
         TableMetadata t = tm.next();
         table_names.add(t.getName());
