@@ -29,7 +29,7 @@ public void run(){
         System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
                 schemaRepository.getAllColumnsFromTable(table)));
         List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
-        KeyspaceRepository.parquetWriter(testParquet,table);
+        KeyspaceRepository.parquetWriter(testParquet,table,"sample"+threadNumber);
         System.out.println("thread number "+ threadNumber);
         try {
             Thread.sleep(3000);

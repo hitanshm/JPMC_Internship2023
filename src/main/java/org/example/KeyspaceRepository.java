@@ -159,8 +159,8 @@ public ResultSet getAllFromTable(CassandraTable table){
         }
         return mList;
     }
-    public static void parquetWriter(List<Map<String, Object>> mList, CassandraTable table) {
-        String tmpPath = "sample.parquet";
+    public static void parquetWriter(List<Map<String, Object>> mList, CassandraTable table, String fileName) {
+        String tmpPath = fileName+".parquet";
         /*Schema schema = null;
         schema = new Schema.Parser().parse( "{\n" +
                 "  \"type\": \"record\",\n" +
