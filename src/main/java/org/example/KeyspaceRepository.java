@@ -106,7 +106,7 @@ public class KeyspaceRepository {
                     .collect(Collectors.toList());
             return accountDetails;
     }*/
-    public List<String> getAllColumnsFromTable(CassandraTable table){
+    public static List<String> getAllColumnsFromTable(CassandraTable table){
         String query = "SELECT * FROM " + table.getTableName();
         //Creating Cluster object
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
@@ -159,7 +159,7 @@ public ResultSet getAllFromTable(CassandraTable table){
         }
         return mList;
     }
-    public static void parquetWriter(List<Map<String, Object>> mList) {
+    public static void parquetWriter(List<Map<String, Object>> mList, CassandraTable table) {
         String tmpPath = "sample.parquet";
         /*Schema schema = null;
         schema = new Schema.Parser().parse( "{\n" +
@@ -178,8 +178,18 @@ public ResultSet getAllFromTable(CassandraTable table){
                 + ", {\"name\": \"balance\", \"type\": \"string\"}" //Required field
                 + ", {\"name\": \"name\", \"type\": \"string\"}"
                 + " ]}";
+        List<String> columns =getAllColumnsFromTable(table);
+        String clms="";
+        for(int i=0;i< columns.size()-1;i++) {
+            clms+=" {\"name\": \""+columns.get(i)+"\",  \"type\": \"string\"},";
+        }
+        clms+=" {\"name\": \""+columns.get(columns.size()-1)+"\",  \"type\": \"string\"}";
+        StringBuilder sb =new StringBuilder("{\"namespace\": \"org.myorganization.mynamespace\",")
+                .append("\"type\": \"record\",").append("\"name\": \"myrecordname\",").append("\"fields\": [")
+                .append(clms).append(" ]}");
+        String parq=sb.toString();
         Schema.Parser parser = new Schema.Parser().setValidate(true);
-        Schema schema=parser.parse(schemaJson);
+        Schema schema=parser.parse(parq);
 
         try (ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(new Path(tmpPath))
                 .withCompressionCodec(CompressionCodecName.SNAPPY)

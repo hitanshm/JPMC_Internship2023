@@ -159,7 +159,7 @@ public class Testing {
         System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
                schemaRepository.getAllColumnsFromTable(table)));
         List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
-        KeyspaceRepository.parquetWriter(testParquet);
+        KeyspaceRepository.parquetWriter(testParquet,table);
     }
     @Test
     public void testParquet() {
@@ -172,7 +172,7 @@ public class Testing {
         mp2.put("B", "ABC");
         mapList.add(mp);
         mapList.add(mp2);
-        KeyspaceRepository.parquetWriter(mapList);
+        //KeyspaceRepository.parquetWriter(mapList,table);
     }
     @Test
     public void parallelProcessing() {
