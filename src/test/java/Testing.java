@@ -1,3 +1,5 @@
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -7,10 +9,16 @@ import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -164,6 +172,22 @@ public class Testing {
         mapList.add(mp);
         mapList.add(mp2);
         KeyspaceRepository.parquetWriter(mapList);
+    }
+    @Test
+    public void parallelProcessing() {
+        int batchsize = 1;
+        ExecutorService executorService = Executors.newFixedThreadPool(batchsize);
+        List<Future<String>> resultFutures = new ArrayList<>();
+
+        String bucketName = "mytestfromjava45543";
+        String keyspaceName2 = "library";
+        String keyName = CreateS3Folder.folderName + "test.txt";
+        String filePath = "C:\\JPMC project\\accountdetails.txt";
+        String long_date = ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu_MM_dd_HH_mm_ss"));
+        String date_compressed = long_date.substring(0, 10);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
+
+        System.out.println("Main has ran.");
     }
 }
 

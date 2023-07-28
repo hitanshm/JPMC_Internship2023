@@ -20,7 +20,6 @@ public class MultithreadingCass extends Thread {
 
     @Override
 public void run(){
-
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042, "hitansh", "hitansh");
         this.session = client.getSession();
