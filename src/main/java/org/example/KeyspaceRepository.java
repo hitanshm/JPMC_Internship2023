@@ -4,9 +4,12 @@ import com.datastax.driver.core.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.hadoop.fs.Path;
+import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.avro.AvroParquetWriter;
 import org.apache.parquet.hadoop.ParquetFileWriter;
+import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.json.simple.JSONObject;
@@ -158,18 +161,26 @@ public ResultSet getAllFromTable(CassandraTable table){
     }
     public static void parquetWriter(List<Map<String, Object>> mList) {
         String tmpPath = "sample.parquet";
-        Schema schema = null;
+        /*Schema schema = null;
         schema = new Schema.Parser().parse( "{\n" +
                 "  \"type\": \"record\",\n" +
                 "  \"name\": \"myrecord\",\n" +
                 "  \"fields\": [ {\n" +
-                "    \"name\": \"mymap\",\n" +
-                "    \"type\": {\n" +
-                "      \"type\": \"map\",\n" +
-                "      \"values\": \"int\"\n" +
-                "    }\n" +
+                "    \"name\": \"accountid\",\n" +
+                "    \"type\": \"int\"\n" +
                 "  } ]\n" +
-                "}" );
+                "}" ); */
+        String schemaJson = "{\"namespace\": \"org.myorganization.mynamespace\"," //Not used in Parquet, can put anything
+                + "\"type\": \"record\"," //Must be set as record
+                + "\"name\": \"myrecordname\"," //Not used in Parquet, can put anything
+                + "\"fields\": ["
+                + " {\"name\": \"accountid\",  \"type\": \"string\"}"
+                + ", {\"name\": \"balance\", \"type\": \"string\"}" //Required field
+                + ", {\"name\": \"name\", \"type\": \"string\"}"
+                + " ]}";
+        Schema.Parser parser = new Schema.Parser().setValidate(true);
+        Schema schema=parser.parse(schemaJson);
+
         try (ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(new Path(tmpPath))
                 .withCompressionCodec(CompressionCodecName.SNAPPY)
                 .withSchema(schema)
@@ -180,7 +191,7 @@ public ResultSet getAllFromTable(CassandraTable table){
             mList.forEach((d) -> {
                 try {
                     d.forEach((K, V) -> {
-                        record.put(K, V);
+                        record.put(K, V.toString());
                     });
                     writer.write(record);
                 } catch (IOException e) {
@@ -191,6 +202,11 @@ public ResultSet getAllFromTable(CassandraTable table){
             e.printStackTrace();
         }
     }
+    /*public static void parquetReader(){
+        ParquetReader<GenericRecord> reader = AvroParquetReader.<GenericRecord>builder(file).build();
+        GenericRecord nextRecord = reader.read();
+    }*/
+
     private ArrayList<String> table_names = new ArrayList<String>();
     public ArrayList<String> getTableNames(){
     Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh","hitansh").build();

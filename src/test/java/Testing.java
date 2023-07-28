@@ -116,6 +116,7 @@ public class Testing {
         this.session = client.getSession();
         schemaRepository = new KeyspaceRepository("library", session);
     }
+
     @Test
     public void testingCassandra() {
 
