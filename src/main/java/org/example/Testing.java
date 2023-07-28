@@ -46,8 +46,9 @@ public class Testing {
 
 
 
-    //public static List table_list = new ArrayList();
 
+/*
+    //Cassandra
     public void connect() {
         //String hello = "Hello";
         CassandraConnector client = new CassandraConnector();
@@ -55,6 +56,8 @@ public class Testing {
         this.session = client.getSession();
         schemaRepository = new KeyspaceRepository(session);
     }
+
+ */
 
     public void parallelProcessing(){
         int batchsize = 1;
@@ -69,18 +72,19 @@ public class Testing {
         String date_compressed = long_date.substring(0,10);
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
 
-        Testing obj = new Testing();
+        //Testing obj = new Testing();
         System.out.println("Main has ran.");
 
 
         //Connects to Cassandra
-        connect();
+        CassandraRelated.connect();
         //Creates keyspace if hasn't already
-        whenCreatingAKeyspace_thenCreated();
+
+        CassandraQueries.whenCreatingAKeyspace_thenCreated();
 
         //Create list called tableArray and store table names inside list
         List<String> tableArray;
-        tableArray = getTables(keyspaceName2);
+        tableArray = CassandraRelated.getTables(keyspaceName2);
 
 
 
@@ -88,7 +92,7 @@ public class Testing {
 
         for (String tableName:tableArray){
             System.out.println("Processing next table: " + tableName);
-            Callable<String> callableTask = () -> this.getTableDataFromCassandraAndStoreInS3(tableName, keyspaceName2);
+            Callable<String> callableTask = () -> StoreInS3.getTableDataFromCassandraAndStoreInS3(tableName, keyspaceName2);
             resultFutures.add(executorService.submit(callableTask));
         }
 
@@ -110,8 +114,18 @@ public class Testing {
         System.out.println("Did any fail?: " + responsesList.stream().anyMatch(response -> response.equals("FAILURE")));
     }
 
+    public static void main(String[] args){
+
+        Testing test = new Testing();
+        test.parallelProcessing();
+    }
 
 
+}
+
+
+/*
+    //S3
     public String getTableDataFromCassandraAndStoreInS3(String tableName, String keyspaceName){
         List<String> collumnNames;
         List<Row> allRowsData;
@@ -128,6 +142,7 @@ public class Testing {
         return "SUCCESS";
     }
 
+    //Cassandra Query
     public List<String> getAllColumnsFromTable(String tableName, String keyspaceName){
         System.out.println("Get all collumns from table " + tableName);
         String query = "SELECT * FROM " + keyspaceName + "." + tableName;
@@ -142,6 +157,8 @@ public class Testing {
         System.out.println(columnNames.toString());
         return columnNames;
     }
+
+    //Cassandra Query
     public List<Row> getAllRowsFromTable(String tableName, List<String> collumnNames, String keyspaceName){
         System.out.println("Get all rows from table " + tableName);
         String query = "SELECT * FROM " + keyspaceName + "." + tableName;
@@ -160,6 +177,7 @@ public class Testing {
 
     }
 
+    //Cassandra Query
     private void whenCreatingAKeyspace_thenCreated() {
         String keyspaceName = "test3";
         schemaRepository.createKeyspace(keyspaceName, "SimpleStrategy", 1);
@@ -185,6 +203,7 @@ public class Testing {
 
 
 
+    //Cassandra
     public List getTables(String keyspaceName2){
 
         List table_names = new ArrayList();
@@ -209,6 +228,7 @@ public class Testing {
 
     }
 
+    //Cassandra connection to S3
     public void connectAndStoreDataToS3(String tableName, List<Row> allRowsData){
         //Store the data in a file in local computer
         //Only temporary but later, don't store in file; instead, directly transfer data in memory to S3
@@ -247,6 +267,7 @@ public class Testing {
         storeFileInS3(bucketName, keyName, filePath);
     }
 
+    //Local computer
     public void writefile(String name, List<Row> input){
         try {
             FileWriter myWriter = new FileWriter(name);
@@ -259,6 +280,7 @@ public class Testing {
         }
     }
 
+    //Cassandra connection to S3
     public void storeFileInS3(String bucketName, String keyName, String filePath){
 
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
@@ -270,15 +292,9 @@ public class Testing {
     }
 
 
-    public static void main(String[] args){
-        Testing test = new Testing();
-        test.parallelProcessing();
-        //Before running this, make sure the folder for today has been created. If it has not, please run CreateS3Folder.java.
-
-    }
+ */
 
 
-    }
 
 
 
