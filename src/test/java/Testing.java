@@ -136,11 +136,7 @@ public class Testing {
         //creates a file on my local computer
         schemaRepository.createfile("C:\\JPMC project\\accountdetails.txt");
         String jsonstring = "";
-        /*for(int i=1; i<=3;i++){
-            AccountDetails testad = schemaRepository.selectRow("accountdetails", i);
-            jsonstring += schemaRepository.convertToJson(testad) + "\n";
-            schemaRepository.writefile("C:\\JPMC project\\accountdetails.txt",jsonstring);
-        }*/
+
         //List<AccountDetails> tableData = schemaRepository.getTable("accountdetails");
         //System.out.println(schemaRepository.convertToJson(tableData));
         CassandraTable table = new CassandraTable("accountdetails");

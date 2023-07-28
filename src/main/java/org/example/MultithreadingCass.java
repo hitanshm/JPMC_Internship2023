@@ -26,8 +26,8 @@ public void run(){
         this.session = client.getSession();
         schemaRepository = new KeyspaceRepository("library",session);
         CassandraTable table = new CassandraTable(tableName);
-        System.out.println(schemaRepository.getAllColumnsFromTable(table));
-        System.out.println(schemaRepository.getAllFromTable(table).all());
+        System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
+                schemaRepository.getAllColumnsFromTable(table)));
         System.out.println("thread number "+ threadNumber);
         try {
             Thread.sleep(3000);
