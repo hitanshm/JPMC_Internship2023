@@ -1,29 +1,46 @@
 package org.example;
 
+import com.datastax.driver.core.Session;
 import org.example.Testing;
 
-public class MultithreadThing implements Runnable{
+public class MultithreadThing extends Thread{
     private int threadNumber;
 
-    public MultithreadThing(int i) {
+    private Session session;
+    private KeyspaceRepository schemaRepository;
+
+    private String tableName;
+    public MultithreadThing(int threadNum, String tableNm){
+        threadNumber=threadNum;
+        tableName=tableNm;
+    }
+
+    /*public MultithreadThing(int i) {
         this.threadNumber = i;
     }
+
+     */
 
 
     @Override
     public void run(){
-        /*
 
-        for (int i = 0; i<Testing.amtOfTables; i++){
-            System.out.println("Thread exists for table " + Testing.table_names.get(i));
+        System.out.println("Thread " + tableName + " is running.");
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-        }
 
-         */
+        CassandraConnector client = new CassandraConnector();
+        client.connect("127.0.0.1", 9042);
+        this.session = client.getSession();
+        schemaRepository = new KeyspaceRepository(session);
+
+
+        CassandraTable table = new CassandraTable(tableName);
+        System.out.println(schemaRepository.getAllColumnsFromTable(table));
+        System.out.println(schemaRepository.getAllRowsFromTable(table).all());
+        System.out.println("thread number "+ threadNumber);
+
+
+
 
 
 

@@ -1,5 +1,6 @@
 package org.example;
 
+import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
@@ -35,6 +36,7 @@ public class KeyspaceRepository {
         session.execute(query);
     }
 
+    /*
     public SampleTable selectRow(String tableName) {
         StringBuilder sb = new StringBuilder("select * from ").append(keyspace1).append(".").append(tableName).append(";");
 
@@ -46,9 +48,38 @@ public class KeyspaceRepository {
         return ad;
     }
 
-    public String convertToJson(SampleTable sampleTable){
+     */
+
+    public List<String> getAllColumnsFromTable(CassandraTable table){
+        String query = "SELECT * FROM " + table.getTableName();
+        //Creating Cluster object
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+        //Creating Session object
+        Session session = cluster.connect("sample_demo");
+        //Getting the ResultSet
+        ResultSet result = session.execute(query);
+        List<String> columnNames =
+                result.getColumnDefinitions().asList().stream()
+                        .map(cl -> cl.getName())
+                        .collect(Collectors.toList());
+        return columnNames;
+    }
+    public ResultSet getAllRowsFromTable(CassandraTable table){
+        String query = "SELECT * FROM " + table.getTableName();
+        //Creating Cluster object
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+        //Creating Session object
+        Session session = cluster.connect("sample_demo");
+        //Getting the ResultSet
+        ResultSet result = session.execute(query);
+        return result;
+    }
+
+    /*public String convertToJson(SampleTable sampleTable){
         return new Gson().toJson(sampleTable);
     }
+
+     */
     public void createfile(String name){
         try {
             File myObj = new File(name);

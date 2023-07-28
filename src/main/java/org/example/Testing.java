@@ -11,11 +11,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.example.JsonS3;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.waiters.WaiterResponse;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Iterables.size;
@@ -27,13 +38,17 @@ import static org.junit.Assert.assertTrue;
 public class Testing {
     private KeyspaceRepository schemaRepository;
     private Session session;
-    public static int amtOfTables;
+    private static int amtOfTables;
 
-    public static List table_names = new ArrayList();
+    public int getAmtOfTables(){
+        return amtOfTables;
+    }
+
+
 
     //public static List table_list = new ArrayList();
 
-    private void connect() {
+    public void connect() {
         //String hello = "Hello";
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042);
@@ -41,6 +56,113 @@ public class Testing {
         schemaRepository = new KeyspaceRepository(session);
     }
 
+    public void parallelProcessing(){
+        int batchsize = 1;
+        ExecutorService executorService = Executors.newFixedThreadPool(batchsize);
+        List<Future<String>> resultFutures = new ArrayList<>();
+
+        String bucketName = "chetan-test-bucket-1";
+        String keyspaceName2 = "sample_demo";
+        String keyName = CreateS3Folder.folderName + "test.txt";
+        String filePath = "C:\\JPMC_Internship_2023\\test.txt";
+        String long_date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd_HH_mm_ss" ) );
+        String date_compressed = long_date.substring(0,10);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
+
+        Testing obj = new Testing();
+        System.out.println("Main has ran.");
+
+
+        //Connects to Cassandra
+        connect();
+        //Creates keyspace if hasn't already
+        whenCreatingAKeyspace_thenCreated();
+
+        //Create list called tableArray and store table names inside list
+        List<String> tableArray;
+        tableArray = getTables(keyspaceName2);
+
+
+
+
+
+        for (String tableName:tableArray){
+            System.out.println("Processing next table: " + tableName);
+            Callable<String> callableTask = () -> this.getTableDataFromCassandraAndStoreInS3(tableName, keyspaceName2);
+            resultFutures.add(executorService.submit(callableTask));
+        }
+
+
+        List<String> responsesList = new ArrayList<>();
+        for (Future<String> future:resultFutures){
+            try {
+                responsesList.add(future.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+        executorService.shutdown();
+
+        System.out.println("Did any fail?: " + responsesList.stream().anyMatch(response -> response.equals("FAILURE")));
+    }
+
+
+
+    public String getTableDataFromCassandraAndStoreInS3(String tableName, String keyspaceName){
+        List<String> collumnNames;
+        List<Row> allRowsData;
+
+        //Get data from Cassandra table
+
+        collumnNames = getAllColumnsFromTable(tableName, keyspaceName);
+        allRowsData = getAllRowsFromTable(tableName, collumnNames, keyspaceName);
+        //Convert data into Parquet format
+
+        //Save the data into S3
+        //JsonS3.putObjectIntoS3(date_compressed, bucketName, keyName, filePath, s3Client);
+        connectAndStoreDataToS3(tableName, allRowsData);
+        return "SUCCESS";
+    }
+
+    public List<String> getAllColumnsFromTable(String tableName, String keyspaceName){
+        System.out.println("Get all collumns from table " + tableName);
+        String query = "SELECT * FROM " + keyspaceName + "." + tableName;
+        //Creating Cluster object
+        //Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+        //Creating Session object
+        //Session session = cluster.connect("sample_demo");
+        //Getting the ResultSet
+        System.out.println("About to execute query " + query);
+        ResultSet result = session.execute(query);
+        System.out.println("Finished execute query " + query);
+        List<String> columnNames =
+                result.getColumnDefinitions().asList().stream()
+                        .map(cl -> cl.getName())
+                        .collect(Collectors.toList());
+        System.out.println(columnNames.toString());
+        return columnNames;
+    }
+    public List<Row> getAllRowsFromTable(String tableName, List<String> collumnNames, String keyspaceName){
+        System.out.println("Get all rows from table " + tableName);
+        String query = "SELECT * FROM " + keyspaceName + "." + tableName;
+        //Creating Cluster object
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+        //Creating Session object
+        Session session = cluster.connect("sample_demo");
+        //Getting the ResultSet
+        ResultSet result = session.execute(query);
+        //Read data from ResultSet and convert into List and return as list of strings
+        List<Row> allRowsData = new ArrayList<>();
+        allRowsData = result.all();
+
+        return allRowsData;
+
+        //return result;
+    }
 
     private void whenCreatingAKeyspace_thenCreated() {
         String keyspaceName = "test3";
@@ -58,10 +180,13 @@ public class Testing {
         assertEquals(matchedKeyspaces.size(), 1);
         assertTrue(matchedKeyspaces.get(0).equals(keyspaceName.toLowerCase()));
 
-        SampleTable testad = schemaRepository.selectRow("student");
+        /*
+        SampleTable testad = schemaRepository.selectRow("test_table2");
         String jsonstring = schemaRepository.convertToJson(testad);
         schemaRepository.createfile("C:\\JPMC_Internship_2023\\test3.txt");
         schemaRepository.writefile("C:\\JPMC_Internship_2023\\test3.txt",jsonstring);
+
+         */
 
 
 
@@ -72,7 +197,9 @@ public class Testing {
 
 
 
-    private void getTables(String keyspaceName2){
+    public List getTables(String keyspaceName2){
+
+        List table_names = new ArrayList();
 
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
         Metadata metadata = cluster.getMetadata();
@@ -83,49 +210,83 @@ public class Testing {
             table_names.add(t.getName());
 
         }
-        System.out.println(table_names);
+        amtOfTables = table_names.size();
 
-        /*
-        ResultSet tables = session.execute("select table_name from system_schema.tables WHERE keyspace_name = '" + keyspaceName2 + "'");
-        table_names = tables.all();
-        amtOfTables = size(table_names);
+        System.out.println("Table names: " + table_names);
+        System.out.println("Total table count: " + amtOfTables);
 
+        return table_names;
 
-        System.out.println(amtOfTables);
-
-         */
-
-        /*
-        for (int i = 0; i < amtOfTables;i++){
-            table_names.get(i).toString().replace("Row[", "");
-            table_names.get(i).toString().replace("]", "");
-            table_list.add(table_names.get(i).toString());
-        }
-        System.out.println(table_list);
-
-         */
-
-
-
-        /*
-        List<String> allTables = tables.all()
-                .stream()
-                .filter(r -> r.getString(0).equals(keyspaceName2.toLowerCase()))
-                .map(r -> r.getString(0))
-                .collect(Collectors.toList());
-
-
-         */
 
 
     }
 
+    public void connectAndStoreDataToS3(String tableName, List<Row> allRowsData){
+        //Store the data in a file in local computer
+        //Only temporary but later, don't store in file; instead, directly transfer data in memory to S3
+        String folderPath = "C:\\JPMC_Internship_2023\\";
+        //String keyName = CreateS3Folder.folderName + tableName +".txt";
+        String date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd" ) );
+        //String folderName = date + "/";
+        String folderName = tableName + "/" + date + "/";
+        String bucketName = "chetan-test-bucket-1";
+        String keyName = folderName + "data.txt";
+        String filePath = folderPath + tableName + ".txt";
+        writefile(filePath, allRowsData);
 
+
+        //String date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd" ) );
+
+        S3Client client = S3Client.builder().build();
+
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucketName).key(folderName).build();
+
+        client.putObject(request, RequestBody.empty());
+
+        S3Waiter waiter = client.waiter();
+        HeadObjectRequest requestWait = HeadObjectRequest.builder()
+                .bucket(bucketName).key(folderName).build();
+
+        WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectExists(requestWait);
+
+        waiterResponse.matched().response().ifPresent(System.out::println);
+
+        System.out.println("Folder " + folderName + " is ready.");
+
+        //Writing the file content into S3
+
+        storeFileInS3(bucketName, keyName, filePath);
+    }
+
+    public void writefile(String name, List<Row> input){
+        try {
+            FileWriter myWriter = new FileWriter(name);
+            myWriter.write(input.toString());
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public void storeFileInS3(String bucketName, String keyName, String filePath){
+
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
+        System.out.println(bucketName + " is the bucket name");
+        System.out.println(keyName + " is the key name");
+        System.out.println(filePath);
+        com.amazonaws.services.s3.model.PutObjectRequest request = new com.amazonaws.services.s3.model.PutObjectRequest(bucketName, keyName, new File(filePath));
+        s3Client.putObject(request);
+    }
 
 
     public static void main(String[] args){
+        Testing test = new Testing();
+        test.parallelProcessing();
         //Before running this, make sure the folder for today has been created. If it has not, please run CreateS3Folder.java.
-
+        /*
         String bucketName = "chetan-test-bucket-1";
         String keyspaceName2 = "sample_demo";
         String keyName = CreateS3Folder.folderName + "test.txt";
@@ -133,8 +294,11 @@ public class Testing {
         String long_date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd_HH_mm_ss" ) );
         String date_compressed = long_date.substring(0,10);
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
+
         Testing obj = new Testing();
         System.out.println("Main has ran.");
+
+
 
 
 
@@ -146,14 +310,33 @@ public class Testing {
         obj.getTables(keyspaceName2);
 
 
-        JsonS3.logic(date_compressed, bucketName, keyName, filePath, s3Client);
+        JsonS3.putObjectIntoS3(date_compressed, bucketName, keyName, filePath, s3Client);
+
+         */
 
 
-        for (int i = 0; i< amtOfTables; i++){
-            MultithreadThing myThing = new MultithreadThing(i+1);
-            Thread myThread = new Thread(myThing);
-            myThread.start();
+
+
+        /*
+        ArrayList<String> table_names = new ArrayList<String>();
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+        Metadata metadata = cluster.getMetadata();
+        Iterator<TableMetadata> tm = metadata.getKeyspace("sample_demo").getTables().iterator();
+
+        while (tm.hasNext()) {
+            TableMetadata t = tm.next();
+            table_names.add(t.getName());
         }
+
+
+
+        for (int i = 0; i < size(table_names); i++) {
+            MultithreadThing multitest = new MultithreadThing(i, table_names.get(i));
+            multitest.start();
+        }
+
+         */
+    }
 
 
 
@@ -176,4 +359,3 @@ public class Testing {
 
 
 
-}
