@@ -8,8 +8,8 @@ import java.io.File;
 public class JSONDataInS3 {
     public static void main(String[] args) {
         String bucketName = "json-data-test-bucket";
-        String keyName = "testing";
-        String filePath = "C:\\JPMC\\S3Test.txt";
+        String keyName = "accountdetails.txt";
+        String filePath = "C:\\JPMC project\\accountdetails.txt";
 
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
 
