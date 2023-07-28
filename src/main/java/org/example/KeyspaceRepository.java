@@ -36,7 +36,7 @@ public class KeyspaceRepository {
      * @param replicationStrategy the replication strategy.
      * @param numberOfReplicas    the number of replicas.
      */
-    public void createKeyspace(String keyspaceName, String replicationStrategy, int numberOfReplicas) {
+    /*public void createKeyspace(String keyspaceName, String replicationStrategy, int numberOfReplicas) {
         StringBuilder sb = new StringBuilder("CREATE KEYSPACE IF NOT EXISTS ")
                 .append(keyspaceName).append(" WITH replication = {")
                 .append("'class':'").append(replicationStrategy)
@@ -45,7 +45,7 @@ public class KeyspaceRepository {
         final String query = sb.toString();
 
         session.execute(query);
-    }
+    }*/
 
     public void createTable(String tableName, String column1, String type1, String column2, String type2, String column3, String type3) {
         StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
