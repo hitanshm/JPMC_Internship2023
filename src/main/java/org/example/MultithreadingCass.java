@@ -5,6 +5,7 @@ import com.datastax.driver.core.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class MultithreadingCass extends Thread {
     private ArrayList<String> table_names = new ArrayList<String>();
@@ -27,6 +28,8 @@ public void run(){
         CassandraTable table = new CassandraTable(tableName);
         System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
                 schemaRepository.getAllColumnsFromTable(table)));
+        List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
+        KeyspaceRepository.parquetWriter(testParquet,table);
         System.out.println("thread number "+ threadNumber);
         try {
             Thread.sleep(3000);
