@@ -123,7 +123,7 @@ public class Testing {
         //Convert data into Parquet format
 
         //Save the data into S3
-        //JsonS3.putObjectIntoS3(date_compressed, bucketName, keyName, filePath, s3Client);
+
         connectAndStoreDataToS3(tableName, allRowsData);
         return "SUCCESS";
     }
@@ -131,11 +131,7 @@ public class Testing {
     public List<String> getAllColumnsFromTable(String tableName, String keyspaceName){
         System.out.println("Get all collumns from table " + tableName);
         String query = "SELECT * FROM " + keyspaceName + "." + tableName;
-        //Creating Cluster object
-        //Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
-        //Creating Session object
-        //Session session = cluster.connect("sample_demo");
-        //Getting the ResultSet
+
         System.out.println("About to execute query " + query);
         ResultSet result = session.execute(query);
         System.out.println("Finished execute query " + query);
@@ -161,7 +157,7 @@ public class Testing {
 
         return allRowsData;
 
-        //return result;
+
     }
 
     private void whenCreatingAKeyspace_thenCreated() {
@@ -179,14 +175,6 @@ public class Testing {
 
         assertEquals(matchedKeyspaces.size(), 1);
         assertTrue(matchedKeyspaces.get(0).equals(keyspaceName.toLowerCase()));
-
-        /*
-        SampleTable testad = schemaRepository.selectRow("test_table2");
-        String jsonstring = schemaRepository.convertToJson(testad);
-        schemaRepository.createfile("C:\\JPMC_Internship_2023\\test3.txt");
-        schemaRepository.writefile("C:\\JPMC_Internship_2023\\test3.txt",jsonstring);
-
-         */
 
 
 
@@ -225,9 +213,9 @@ public class Testing {
         //Store the data in a file in local computer
         //Only temporary but later, don't store in file; instead, directly transfer data in memory to S3
         String folderPath = "C:\\JPMC_Internship_2023\\";
-        //String keyName = CreateS3Folder.folderName + tableName +".txt";
+
         String date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd" ) );
-        //String folderName = date + "/";
+
         String folderName = tableName + "/" + date + "/";
         String bucketName = "chetan-test-bucket-1";
         String keyName = folderName + "data.txt";
@@ -235,7 +223,7 @@ public class Testing {
         writefile(filePath, allRowsData);
 
 
-        //String date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd" ) );
+
 
         S3Client client = S3Client.builder().build();
 
@@ -286,73 +274,13 @@ public class Testing {
         Testing test = new Testing();
         test.parallelProcessing();
         //Before running this, make sure the folder for today has been created. If it has not, please run CreateS3Folder.java.
-        /*
-        String bucketName = "chetan-test-bucket-1";
-        String keyspaceName2 = "sample_demo";
-        String keyName = CreateS3Folder.folderName + "test.txt";
-        String filePath = "C:\\JPMC_Internship_2023\\test.txt";
-        String long_date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd_HH_mm_ss" ) );
-        String date_compressed = long_date.substring(0,10);
-        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
 
-        Testing obj = new Testing();
-        System.out.println("Main has ran.");
-
-
-
-
-
-
-
-        obj.connect();
-
-        obj.whenCreatingAKeyspace_thenCreated();
-        obj.getTables(keyspaceName2);
-
-
-        JsonS3.putObjectIntoS3(date_compressed, bucketName, keyName, filePath, s3Client);
-
-         */
-
-
-
-
-        /*
-        ArrayList<String> table_names = new ArrayList<String>();
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
-        Metadata metadata = cluster.getMetadata();
-        Iterator<TableMetadata> tm = metadata.getKeyspace("sample_demo").getTables().iterator();
-
-        while (tm.hasNext()) {
-            TableMetadata t = tm.next();
-            table_names.add(t.getName());
-        }
-
-
-
-        for (int i = 0; i < size(table_names); i++) {
-            MultithreadThing multitest = new MultithreadThing(i, table_names.get(i));
-            multitest.start();
-        }
-
-         */
     }
 
 
-
-
-
-
-
-
-
-
-
-
-        //System.exit(0);
     }
 
-    //@Before
+
 
 
 
