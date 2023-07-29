@@ -17,6 +17,18 @@ public class CassandraQueries {
     public static KeyspaceRepository schemaRepository;
     public static Session session;
     public static int amtOfTables;
+
+    public static void connectToCassandraDatabase(){
+        //Creating Cluster object
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+        //Creating Session object
+        Session session = null;
+        try {
+            session = cluster.connect("sample_demo");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static List<String> getAllColumnsFromTable(String tableName, String keyspaceName){
         System.out.println("Get all collumns from table " + tableName);
         String query = "SELECT * FROM " + keyspaceName + "." + tableName;
@@ -35,10 +47,7 @@ public class CassandraQueries {
     public static List<Row> getAllRowsFromTable(String tableName, List<String> collumnNames, String keyspaceName){
         System.out.println("Get all rows from table " + tableName);
         String query = "SELECT * FROM " + keyspaceName + "." + tableName;
-        //Creating Cluster object
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
-        //Creating Session object
-        Session session = cluster.connect("sample_demo");
+
         //Getting the ResultSet
         ResultSet result = session.execute(query);
         //Read data from ResultSet and convert into List and return as list of strings
@@ -51,6 +60,7 @@ public class CassandraQueries {
     }
 
     public static void whenCreatingAKeyspace_thenCreated() {
+
 
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042);

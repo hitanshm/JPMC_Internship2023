@@ -61,7 +61,8 @@ public class CassandraConnectionToS3 {
         System.out.println("Folder " + folderName + " is ready.");
 
         //Writing the file content into S3
-
-        storeFileInS3(bucketName, keyName, filePath);
+        String parquetFilePath = "C:\\Users\\cheta\\IdeaProjects\\cassandra\\data_" + tableName + ".parquet";
+        String parquetKeyName = folderName + "data.parquet";
+        storeFileInS3(bucketName, parquetKeyName, parquetFilePath);
     }
 }

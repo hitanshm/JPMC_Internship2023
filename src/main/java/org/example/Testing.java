@@ -67,7 +67,7 @@ public class Testing {
         String bucketName = "chetan-test-bucket-1";
         String keyspaceName2 = "sample_demo";
         String keyName = CreateS3Folder.folderName + "test.txt";
-        String filePath = "C:\\JPMC_Internship_2023\\test.txt";
+
         String long_date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd_HH_mm_ss" ) );
         String date_compressed = long_date.substring(0,10);
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
@@ -91,8 +91,13 @@ public class Testing {
 
 
         for (String tableName:tableArray){
+
+            String fileName = "data_" + tableName;
             System.out.println("Processing next table: " + tableName);
             Callable<String> callableTask = () -> StoreInS3.getTableDataFromCassandraAndStoreInS3(tableName, keyspaceName2);
+            List<String> Collumns = CassandraQueries.getAllColumnsFromTable(tableName, keyspaceName2);
+            List<Map<String, Object>> mList = ParquetRelated.RowsToMList(CassandraQueries.getAllRowsFromTable(tableName, Collumns, keyspaceName2), Collumns);
+            ParquetRelated.parquetWriter(mList, tableName, fileName, keyspaceName2);
             resultFutures.add(executorService.submit(callableTask));
         }
 
@@ -109,190 +114,29 @@ public class Testing {
                 throw new RuntimeException(e);
             }
         }
-        executorService.shutdown();
+
+
+
+        //executorService.shutdown();
 
         System.out.println("Did any fail?: " + responsesList.stream().anyMatch(response -> response.equals("FAILURE")));
+
+
     }
 
     public static void main(String[] args){
 
         Testing test = new Testing();
         test.parallelProcessing();
+        System.exit(0);
+
     }
 
 
 }
 
 
-/*
-    //S3
-    public String getTableDataFromCassandraAndStoreInS3(String tableName, String keyspaceName){
-        List<String> collumnNames;
-        List<Row> allRowsData;
 
-        //Get data from Cassandra table
-
-        collumnNames = getAllColumnsFromTable(tableName, keyspaceName);
-        allRowsData = getAllRowsFromTable(tableName, collumnNames, keyspaceName);
-        //Convert data into Parquet format
-
-        //Save the data into S3
-
-        connectAndStoreDataToS3(tableName, allRowsData);
-        return "SUCCESS";
-    }
-
-    //Cassandra Query
-    public List<String> getAllColumnsFromTable(String tableName, String keyspaceName){
-        System.out.println("Get all collumns from table " + tableName);
-        String query = "SELECT * FROM " + keyspaceName + "." + tableName;
-
-        System.out.println("About to execute query " + query);
-        ResultSet result = session.execute(query);
-        System.out.println("Finished execute query " + query);
-        List<String> columnNames =
-                result.getColumnDefinitions().asList().stream()
-                        .map(cl -> cl.getName())
-                        .collect(Collectors.toList());
-        System.out.println(columnNames.toString());
-        return columnNames;
-    }
-
-    //Cassandra Query
-    public List<Row> getAllRowsFromTable(String tableName, List<String> collumnNames, String keyspaceName){
-        System.out.println("Get all rows from table " + tableName);
-        String query = "SELECT * FROM " + keyspaceName + "." + tableName;
-        //Creating Cluster object
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
-        //Creating Session object
-        Session session = cluster.connect("sample_demo");
-        //Getting the ResultSet
-        ResultSet result = session.execute(query);
-        //Read data from ResultSet and convert into List and return as list of strings
-        List<Row> allRowsData = new ArrayList<>();
-        allRowsData = result.all();
-
-        return allRowsData;
-
-
-    }
-
-    //Cassandra Query
-    private void whenCreatingAKeyspace_thenCreated() {
-        String keyspaceName = "test3";
-        schemaRepository.createKeyspace(keyspaceName, "SimpleStrategy", 1);
-
-        ResultSet result =
-                session.execute("SELECT * FROM system_schema.keyspaces;");
-
-        List<String> matchedKeyspaces = result.all()
-                .stream()
-                .filter(r -> r.getString(0).equals(keyspaceName.toLowerCase()))
-                .map(r -> r.getString(0))
-                .collect(Collectors.toList());
-
-        assertEquals(matchedKeyspaces.size(), 1);
-        assertTrue(matchedKeyspaces.get(0).equals(keyspaceName.toLowerCase()));
-
-
-
-
-        System.out.println("Process has ran successfully.");
-
-    }
-
-
-
-    //Cassandra
-    public List getTables(String keyspaceName2){
-
-        List table_names = new ArrayList();
-
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
-        Metadata metadata = cluster.getMetadata();
-        Iterator<TableMetadata> tm = metadata.getKeyspace(keyspaceName2).getTables().iterator();
-
-        while (tm.hasNext()){
-            TableMetadata t = tm.next();
-            table_names.add(t.getName());
-
-        }
-        amtOfTables = table_names.size();
-
-        System.out.println("Table names: " + table_names);
-        System.out.println("Total table count: " + amtOfTables);
-
-        return table_names;
-
-
-
-    }
-
-    //Cassandra connection to S3
-    public void connectAndStoreDataToS3(String tableName, List<Row> allRowsData){
-        //Store the data in a file in local computer
-        //Only temporary but later, don't store in file; instead, directly transfer data in memory to S3
-        String folderPath = "C:\\JPMC_Internship_2023\\";
-
-        String date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd" ) );
-
-        String folderName = tableName + "/" + date + "/";
-        String bucketName = "chetan-test-bucket-1";
-        String keyName = folderName + "data.txt";
-        String filePath = folderPath + tableName + ".txt";
-        writefile(filePath, allRowsData);
-
-
-
-
-        S3Client client = S3Client.builder().build();
-
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucketName).key(folderName).build();
-
-        client.putObject(request, RequestBody.empty());
-
-        S3Waiter waiter = client.waiter();
-        HeadObjectRequest requestWait = HeadObjectRequest.builder()
-                .bucket(bucketName).key(folderName).build();
-
-        WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectExists(requestWait);
-
-        waiterResponse.matched().response().ifPresent(System.out::println);
-
-        System.out.println("Folder " + folderName + " is ready.");
-
-        //Writing the file content into S3
-
-        storeFileInS3(bucketName, keyName, filePath);
-    }
-
-    //Local computer
-    public void writefile(String name, List<Row> input){
-        try {
-            FileWriter myWriter = new FileWriter(name);
-            myWriter.write(input.toString());
-            myWriter.close();
-            System.out.println("Successfully wrote to the file.");
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
-
-    //Cassandra connection to S3
-    public void storeFileInS3(String bucketName, String keyName, String filePath){
-
-        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
-        System.out.println(bucketName + " is the bucket name");
-        System.out.println(keyName + " is the key name");
-        System.out.println(filePath);
-        com.amazonaws.services.s3.model.PutObjectRequest request = new com.amazonaws.services.s3.model.PutObjectRequest(bucketName, keyName, new File(filePath));
-        s3Client.putObject(request);
-    }
-
-
- */
 
 
 
