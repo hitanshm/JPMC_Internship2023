@@ -12,15 +12,31 @@ import org.apache.parquet.hadoop.ParquetFileWriter;
 import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
+import org.apache.parquet.hadoop.util.HadoopInputFile;
+import org.apache.parquet.io.ColumnIOFactory;
+import org.apache.parquet.io.MessageColumnIO;
+import org.apache.parquet.io.RecordReader;
+import org.apache.parquet.schema.MessageType;
 import org.json.simple.JSONObject;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.parquet.column.page.PageReadStore;
+import org.apache.parquet.example.data.simple.SimpleGroup;
+import org.apache.parquet.example.data.simple.convert.GroupRecordConverter;
+import org.apache.parquet.hadoop.ParquetFileReader;
 
 import org.apache.avro.Schema;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.FileSystem;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.amazonaws.services.databasemigrationservice.model.DataFormatValue.Parquet;
+import static com.sun.deploy.trace.Trace.createTempFile;
+import static org.apache.parquet.example.Paper.schema;
 
 public class KeyspaceRepository {
     private Session session;
@@ -212,10 +228,51 @@ public static ResultSet getAllFromTable(CassandraTable table, String keyspace){
             e.printStackTrace();
         }
     }
-    /*public static void parquetReader(){
+    public static String parquetReader() throws IOException {
+        Path file = new Path("sample1.parquet");
         ParquetReader<GenericRecord> reader = AvroParquetReader.<GenericRecord>builder(file).build();
         GenericRecord nextRecord = reader.read();
-    }*/
+        List<SimpleGroup> simpleGroups = new ArrayList<>();
+        ParquetFileReader reader2 = ParquetFileReader.open(HadoopInputFile.fromPath(new Path("sample1.parquet"), new Configuration()));
+        MessageType schema = reader2.getFooter().getFileMetaData().getSchema();
+        PageReadStore pages;
+        while ((pages = reader2.readNextRowGroup()) != null) {
+            long rows = pages.getRowCount();
+            MessageColumnIO columnIO = new ColumnIOFactory().getColumnIO(schema);
+            RecordReader recordReader = columnIO.getRecordReader(pages, new GroupRecordConverter(schema));
+
+            for (int i = 0; i < rows; i++) {
+                SimpleGroup simpleGroup = (SimpleGroup) recordReader.read();
+                simpleGroups.add(simpleGroup);
+            }
+        }
+        reader.close();
+        return simpleGroups.toString();
+    }
+    /*public static Parquet getParquetData(String filePath) throws IOException {
+        List<SimpleGroup> simpleGroups = new ArrayList<>();
+        ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path(filePath), new Configuration()));
+        MessageType schema = reader.getFooter().getFileMetaData().getSchema();
+        List<Type> fields = schema.getFields();
+        PageReadStore pages;
+        while ((pages = reader.readNextRowGroup()) != null) {
+            long rows = pages.getRowCount();
+            MessageColumnIO columnIO = new ColumnIOFactory().getColumnIO(schema);
+            RecordReader recordReader = columnIO.getRecordReader(pages, new GroupRecordConverter(schema));
+
+            for (int i = 0; i < rows; i++) {
+                SimpleGroup simpleGroup = (SimpleGroup) recordReader.read();
+                simpleGroups.add(simpleGroup);
+            }
+        }
+        reader.close();
+        return new Parquet(simpleGroups, fields);
+    }
+
+*/
+    private static FileSystem createTempFile() {
+        return null;
+    }
 
     private ArrayList<String> table_names = new ArrayList<String>();
     public ArrayList<String> getTableNames(){

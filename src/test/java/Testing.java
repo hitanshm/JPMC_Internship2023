@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -120,7 +121,7 @@ public class Testing {
     }
 
     @Test
-    public void testingCassandra() {
+    public void testingCassandra() throws IOException {
 
         schemaRepository.createTable("accountdetails", "accountid","int","name","text", "balance","int");
 
@@ -166,6 +167,7 @@ public class Testing {
         jsonS3.createFolder();
         ReadS3 readS3 = new ReadS3();
         readS3.readFromS3();
+        System.out.println(schemaRepository.parquetReader());
         //StoreJsonToS3 storeJsonToS3= new StoreJsonToS3();
         //storeJsonToS3.sendToS3();
         /*
