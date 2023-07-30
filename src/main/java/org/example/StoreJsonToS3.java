@@ -6,10 +6,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.File;
 
 public class StoreJsonToS3 {
-    public static void main(String[] args) {
+    public static void sendToS3() {
         String bucketName = "mytestfromjava45543";
-        String keyName = "accountdetails.txt";
-        String filePath = "C:\\JPMC project\\accountdetails.txt";
+        String keyName = "sample0.parquet";
+        String filePath = "sample0.parquet";
 
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
 

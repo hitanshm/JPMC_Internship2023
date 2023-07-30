@@ -25,6 +25,6 @@ public class Main {
                 MultithreadingCass multitest = new MultithreadingCass(i, table_names.get(i));
                 multitest.start();
             }
-            //Platform.exit();
+            //System.exit(0);
     }
 }

@@ -106,12 +106,12 @@ public class KeyspaceRepository {
                     .collect(Collectors.toList());
             return accountDetails;
     }*/
-    public static List<String> getAllColumnsFromTable(CassandraTable table){
+    public static List<String> getAllColumnsFromTable(CassandraTable table, String keyspaceName){
         String query = "SELECT * FROM " + table.getTableName();
         //Creating Cluster object
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
         //Creating Session object
-        Session session = cluster.connect("library");
+        Session session = cluster.connect(keyspaceName);
         //Getting the ResultSet
         ResultSet result = session.execute(query);
         List<String> columnNames =
@@ -120,12 +120,12 @@ public class KeyspaceRepository {
                         .collect(Collectors.toList());
         return columnNames;
     }
-public ResultSet getAllFromTable(CassandraTable table){
+public static ResultSet getAllFromTable(CassandraTable table, String keyspace){
         String query = "SELECT * FROM " + table.getTableName();
         //Creating Cluster object
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
         //Creating Session object
-        Session session = cluster.connect("library");
+        Session session = cluster.connect(keyspace);
         //Getting the ResultSet
         ResultSet result = session.execute(query);
         return result;
@@ -178,7 +178,7 @@ public ResultSet getAllFromTable(CassandraTable table){
                 + ", {\"name\": \"balance\", \"type\": \"string\"}" //Required field
                 + ", {\"name\": \"name\", \"type\": \"string\"}"
                 + " ]}";
-        List<String> columns =getAllColumnsFromTable(table);
+        List<String> columns =getAllColumnsFromTable(table,"library");
         String clms="";
         for(int i=0;i< columns.size()-1;i++) {
             clms+=" {\"name\": \""+columns.get(i)+"\",  \"type\": \"string\"},";

@@ -16,11 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import static org.example.StoreJsonToS3.sendToS3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -156,10 +158,34 @@ public class Testing {
         //System.out.println(table.getColumnNames());
 //        System.out.println(schemaRepository.getAllColumnsFromTable(table));
 //        System.out.println(schemaRepository.getAllFromTable(table).all());
-        System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
-               schemaRepository.getAllColumnsFromTable(table)));
-        List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
+        System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table,"library").all(),
+               schemaRepository.getAllColumnsFromTable(table,"library")));
+        List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table,"library").all(),schemaRepository.getAllColumnsFromTable(table,"library"));
         KeyspaceRepository.parquetWriter(testParquet,table,"sample");
+        JsonS3 jsonS3= new JsonS3();
+        jsonS3.createFolder();
+        ReadS3 readS3 = new ReadS3();
+        readS3.readFromS3();
+        //StoreJsonToS3 storeJsonToS3= new StoreJsonToS3();
+        //storeJsonToS3.sendToS3();
+        /*
+        List<String> tableArray;
+        tableArray = KeyspaceRepository.getTables("library");
+
+
+
+
+
+        for (String tableName:tableArray){
+
+            String fileName = "data_" + tableName;
+            System.out.println("Processing next table: " + tableName);
+            Callable<String> callableTask = () -> StoreInS3.getTableDataFromCassandraAndStoreInS3(tableName, keyspaceName2);
+            List<String> Collumns = KeyspaceRepository.getAllColumnsFromTable(tableName, keyspaceName2);
+            List<Map<String, Object>> mList = ParquetRelated.RowsToMList(CassandraQueries.getAllRowsFromTable(tableName, Collumns, keyspaceName2), Collumns);
+            ParquetRelated.parquetWriter(mList, tableName, fileName, keyspaceName2);
+            resultFutures.add(executorService.submit(callableTask));
+        }*/
     }
     @Test
     public void testParquet() {
@@ -182,7 +208,7 @@ public class Testing {
 
         String bucketName = "mytestfromjava45543";
         String keyspaceName2 = "library";
-        String keyName = CreateS3Folder.folderName + "test.txt";
+        String keyName = CreateS3Folder.folderName + "accountdetails.txt";
         String filePath = "C:\\JPMC project\\accountdetails.txt";
         String long_date = ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu_MM_dd_HH_mm_ss"));
         String date_compressed = long_date.substring(0, 10);

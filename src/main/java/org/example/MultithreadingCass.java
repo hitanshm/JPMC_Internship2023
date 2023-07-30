@@ -26,9 +26,9 @@ public void run(){
         this.session = client.getSession();
         schemaRepository = new KeyspaceRepository("library",session);
         CassandraTable table = new CassandraTable(tableName);
-        System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table).all(),
-                schemaRepository.getAllColumnsFromTable(table)));
-        List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table).all(),schemaRepository.getAllColumnsFromTable(table));
+        System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table,"library").all(),
+                schemaRepository.getAllColumnsFromTable(table,"library")));
+        List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table,"library").all(),schemaRepository.getAllColumnsFromTable(table,"library"));
         KeyspaceRepository.parquetWriter(testParquet,table,"sample"+threadNumber);
         System.out.println("thread number "+ threadNumber);
         try {
