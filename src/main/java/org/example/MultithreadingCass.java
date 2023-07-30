@@ -2,6 +2,7 @@ package org.example;
 
 import com.datastax.driver.core.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,8 +29,18 @@ public void run(){
         CassandraTable table = new CassandraTable(tableName);
         System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table,"library").all(),
                 schemaRepository.getAllColumnsFromTable(table,"library")));
+        String filePath ="sample"+threadNumber+".parquet";
         List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table,"library").all(),schemaRepository.getAllColumnsFromTable(table,"library"));
-        KeyspaceRepository.parquetWriter(testParquet,table,"sample"+threadNumber);
+        KeyspaceRepository.parquetWriter(testParquet,table,filePath);
+        JsonS3 jsonS3= new JsonS3();
+        jsonS3.createFolder(filePath);
+        ReadS3 readS3 = new ReadS3();
+        readS3.readFromS3();
+        try {
+            System.out.println(schemaRepository.parquetReader(filePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("thread number "+ threadNumber);
         try {
             Thread.sleep(3000);

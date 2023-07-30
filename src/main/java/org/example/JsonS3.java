@@ -19,11 +19,11 @@ import java.util.Date;
 import static org.example.CreateS3Folder.folderName;
 
 public class JsonS3 {
-    public static void createFolder() {
+    public static void createFolder(String fileName) {
 
         String bucketName = "mytestfromjava45543";
-        String keyName = folderName + "sample1.parquet";
-        String filePath = "sample1.parquet";
+        String keyName = folderName + fileName;
+        String filePath = fileName;
         String long_date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd_HH_mm_ss" ) );
         String date_compressed = long_date.substring(0,10);
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();

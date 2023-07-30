@@ -164,10 +164,10 @@ public class Testing {
         List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table,"library").all(),schemaRepository.getAllColumnsFromTable(table,"library"));
         KeyspaceRepository.parquetWriter(testParquet,table,"sample");
         JsonS3 jsonS3= new JsonS3();
-        jsonS3.createFolder();
+        jsonS3.createFolder("sample0.parquet");
         ReadS3 readS3 = new ReadS3();
         readS3.readFromS3();
-        System.out.println(schemaRepository.parquetReader());
+        System.out.println(schemaRepository.parquetReader("sample0.parquet"));
         //StoreJsonToS3 storeJsonToS3= new StoreJsonToS3();
         //storeJsonToS3.sendToS3();
         /*

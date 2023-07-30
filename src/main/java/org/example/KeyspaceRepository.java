@@ -176,7 +176,7 @@ public static ResultSet getAllFromTable(CassandraTable table, String keyspace){
         return mList;
     }
     public static void parquetWriter(List<Map<String, Object>> mList, CassandraTable table, String fileName) {
-        String tmpPath = fileName+".parquet";
+        String tmpPath = fileName;
         /*Schema schema = null;
         schema = new Schema.Parser().parse( "{\n" +
                 "  \"type\": \"record\",\n" +
@@ -228,15 +228,12 @@ public static ResultSet getAllFromTable(CassandraTable table, String keyspace){
             e.printStackTrace();
         }
     }
-    public static String parquetReader() throws IOException {
-        Path file = new Path("sample1.parquet");
-        ParquetReader<GenericRecord> reader = AvroParquetReader.<GenericRecord>builder(file).build();
-        GenericRecord nextRecord = reader.read();
+    public static String parquetReader(String filePath) throws IOException {
         List<SimpleGroup> simpleGroups = new ArrayList<>();
-        ParquetFileReader reader2 = ParquetFileReader.open(HadoopInputFile.fromPath(new Path("sample1.parquet"), new Configuration()));
-        MessageType schema = reader2.getFooter().getFileMetaData().getSchema();
+        ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path(filePath), new Configuration()));
+        MessageType schema = reader.getFooter().getFileMetaData().getSchema();
         PageReadStore pages;
-        while ((pages = reader2.readNextRowGroup()) != null) {
+        while ((pages = reader.readNextRowGroup()) != null) {
             long rows = pages.getRowCount();
             MessageColumnIO columnIO = new ColumnIOFactory().getColumnIO(schema);
             RecordReader recordReader = columnIO.getRecordReader(pages, new GroupRecordConverter(schema));

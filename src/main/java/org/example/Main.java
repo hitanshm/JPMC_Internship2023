@@ -25,6 +25,7 @@ public class Main {
                 MultithreadingCass multitest = new MultithreadingCass(i, table_names.get(i));
                 multitest.start();
             }
+            //System.out.println("Project Successful");
             //System.exit(0);
     }
 }
