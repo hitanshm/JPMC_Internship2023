@@ -19,6 +19,8 @@ import org.json.simple.JSONObject;
 import org.apache.avro.Schema;
 
 
+
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.io.IOException;
 
 
 public class ParquetRelated {
+
     public static List<Map<String, Object>> RowsToMList(List<Row> rows, List<String> columns) {
         List<Map<String, Object>> mList = new ArrayList<>();
         for (Row row : rows) {
