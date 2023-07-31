@@ -25,6 +25,6 @@ public class Main {
             MultithreadingTest multitest = new MultithreadingTest(i, table_names.get(i));
             multitest.start();
         }
-        //Platform.exit();
+
     }
 }
