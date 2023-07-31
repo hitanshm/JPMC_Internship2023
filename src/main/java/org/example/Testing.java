@@ -6,11 +6,11 @@ import com.datastax.driver.core.*;
 import org.apache.cassandra.cql3.Json;
 import org.example.CassandraConnector;
 import org.example.KeyspaceRepository;
-import org.example.SampleTable;
+//import org.example.SampleTable;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.example.JsonS3;
+//import org.example.JsonS3;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -66,7 +66,7 @@ public class Testing {
 
         String bucketName = "chetan-test-bucket-1";
         String keyspaceName2 = "sample_demo";
-        String keyName = CreateS3Folder.folderName + "test.txt";
+        //String keyName = CreateS3Folder.folderName + "test.txt";
 
         String long_date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd_HH_mm_ss" ) );
         String date_compressed = long_date.substring(0,10);
