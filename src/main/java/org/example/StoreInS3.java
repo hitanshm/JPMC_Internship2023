@@ -11,6 +11,8 @@ public class StoreInS3 {
         List<String> collumnNames;
         List<Row> allRowsData;
 
+
+        //Surrounding connection, getColumns, getRows, and storeS3 with try catch to avoid errors during multithreading
         try{
             connectToCassandraDatabase();
         } catch(Exception e){
@@ -53,9 +55,6 @@ public class StoreInS3 {
             }
         }
 
-        //Convert data into Parquet format
-
-        //Save the data into S3
 
         try{
             CassandraConnectionToS3.connectAndStoreDataToS3(tableName, allRowsData);

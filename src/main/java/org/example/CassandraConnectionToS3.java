@@ -36,11 +36,8 @@ public class CassandraConnectionToS3 {
 
         String folderName = tableName + "/" + date + "/";
         String bucketName = "chetan-test-bucket-1";
-        String keyName = folderName + "data.txt";
         String filePath = folderPath + tableName + ".txt";
         LocalComputer.writefile(filePath, allRowsData);
-
-
 
 
         S3Client client = S3Client.builder().build();

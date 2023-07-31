@@ -47,6 +47,9 @@ import static com.amazonaws.services.cloudtraildata.AWSCloudTrailDataClient.buil
 
 public class ParquetRelated {
 
+
+    //Unused, but can be experimented with
+    //Reading parquet file from AWS
     public static void readParquetAWS() throws IOException {
         Path path = new Path("s3a://chetan-test-bucket-1/student/2023_07_31/data.parquet");
         Configuration conf = new Configuration();
@@ -54,6 +57,7 @@ public class ParquetRelated {
         conf.set("FE4dnAXA18U9RJW+VAKQ544NHdfaEqYZiZ+euL2Z", "SECRET");
         conf.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem");
         conf.setBoolean("fs.s3a.path.style.access", true);
+        //Following line causes error, unable to resolve
         //conf.setBoolean(org.apache.parquet.avro.AvroReadSupport.READ_INT96_AS_FIXED, true);
 
         InputFile file = HadoopInputFile.fromPath(path, conf);
@@ -64,6 +68,7 @@ public class ParquetRelated {
         }
     }
 
+    //Reading local parquet file
     public static String parquetReaderLocal(String filePath) throws IOException {
         List<SimpleGroup> simpleGroups = new ArrayList<>();
         ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path(filePath), new Configuration()));
