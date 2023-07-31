@@ -124,10 +124,12 @@ public class Testing {
 
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
+        String filePath = "C:\\Users\\cheta\\IdeaProjects\\cassandra\\data_student.parquet";
 
         Testing test = new Testing();
         test.parallelProcessing();
+        System.out.println(ParquetRelated.parquetReaderLocal(filePath));
         System.exit(0);
 
     }
