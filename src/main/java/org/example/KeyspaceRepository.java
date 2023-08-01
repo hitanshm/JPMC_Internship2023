@@ -14,6 +14,7 @@ import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.apache.parquet.hadoop.util.HadoopInputFile;
 import org.apache.parquet.io.ColumnIOFactory;
+import org.apache.parquet.io.InputFile;
 import org.apache.parquet.io.MessageColumnIO;
 import org.apache.parquet.io.RecordReader;
 import org.apache.parquet.schema.MessageType;
@@ -230,6 +231,7 @@ public static ResultSet getAllFromTable(CassandraTable table, String keyspace){
     }
     public static String parquetReader(String filePath) throws IOException {
         List<SimpleGroup> simpleGroups = new ArrayList<>();
+
         ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path(filePath), new Configuration()));
         MessageType schema = reader.getFooter().getFileMetaData().getSchema();
         PageReadStore pages;

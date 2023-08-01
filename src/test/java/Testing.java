@@ -151,7 +151,7 @@ public class Testing {
 
         //List<AccountDetails> tableData = schemaRepository.getTable("accountdetails");
         //System.out.println(schemaRepository.convertToJson(tableData));
-        CassandraTable table = new CassandraTable("accountdetails");
+        CassandraTable table = new CassandraTable("library", "accountdetails");
         //System.out.println(table.getColumnNames());
         //System.out.println(schemaRepository.getAllColumnsFromTable(table));
         //List<Row> rs =schemaRepository.getAllFromTable(table).all();
@@ -162,7 +162,7 @@ public class Testing {
         System.out.println(schemaRepository.RowsToJson(schemaRepository.getAllFromTable(table,"library").all(),
                schemaRepository.getAllColumnsFromTable(table,"library")));
         List<Map<String, Object>> testParquet= schemaRepository.RowsToMList(schemaRepository.getAllFromTable(table,"library").all(),schemaRepository.getAllColumnsFromTable(table,"library"));
-        KeyspaceRepository.parquetWriter(testParquet,table,"sample");
+        KeyspaceRepository.parquetWriter(testParquet,table,"sampleTest.parquet");
         JsonS3 jsonS3= new JsonS3();
         jsonS3.createFolder("sample0.parquet");
         ReadS3 readS3 = new ReadS3();
@@ -216,7 +216,7 @@ public class Testing {
         String date_compressed = long_date.substring(0, 10);
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
 
-        System.out.println("Main has ran.");
+        System.out.println("Main2 has ran.");
     }
 }
 
