@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-public class Multithreading extends Thread{
+
+public class DataProcessor extends Thread{
     private ArrayList<String> tableNames = new ArrayList<String>();
     private int threadNumber;
     private String keyspaceName;
@@ -15,8 +16,9 @@ public class Multithreading extends Thread{
     private String bucketName;
     private String cassandraUser;
     private String cassandraPassword;
+    //change class name
 
-    public Multithreading(int threadNumber, String keyspaceName, String tableName, String bucketName, String cassandraUser, String cassandraPassword){
+    public DataProcessor(int threadNumber, String keyspaceName, String tableName, String bucketName, String cassandraUser, String cassandraPassword){
         this.threadNumber=threadNumber;
         this.keyspaceName=keyspaceName;
         this.tableName=tableName;
@@ -66,6 +68,7 @@ public class Multithreading extends Thread{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println(parquet.getFileSize(filePath));
     }
 
 }

@@ -19,6 +19,7 @@ import org.apache.parquet.io.MessageColumnIO;
 import org.apache.parquet.io.RecordReader;
 import org.apache.parquet.schema.MessageType;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,5 +98,9 @@ public class Parquet {
         }
         reader.close();
         return simpleGroups.toString();
+    }
+    public String getFileSize(String filepath){
+        File file = new File(filepath);
+        return filepath+ (double) file.length() / 1024 + " kb";
     }
 }

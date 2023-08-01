@@ -3,7 +3,6 @@ package org.example;
 import com.datastax.driver.core.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,13 +54,22 @@ public class Cassandra {
         cluster.close();
     }
     //gets the ResultSet data of a table
-    public ResultSet getResult(CassandraTable table){
-        String query = "SELECT * FROM " + table.getTableName();
+    //connect once
+    //get cassandra session
+    public Session getCassandraSession(CassandraTable table){
+        if (session!=null){
+            return session;
+        }
         //Creating Cluster object
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1")
                 .withCredentials(user, password).build();
         //Creating Session object
-        Session session = cluster.connect(table.getKeyspaceName());
+        session = cluster.connect(table.getKeyspaceName());
+        return session;
+    }
+    public ResultSet getResult(CassandraTable table){
+        String query = "SELECT * FROM " + table.getKeyspaceName()+"."+ table.getTableName();
+        session= getCassandraSession(table);
         //Getting the ResultSet
         ResultSet result = session.execute(query);
         return result;
@@ -93,12 +101,10 @@ public class Cassandra {
         for (TableMetadata t : metadata.getKeyspace(keyspaceName).getTables()) {
             tableNames.add(t.getName());
         }
-
         int numOfTables = tableNames.size();
         System.out.println("Table names: " + tableNames);
         System.out.println("Total table count: " + numOfTables);
 
         return tableNames;
-
     }
 }

@@ -7,7 +7,7 @@ public class CassandraTable {
     private String tableName;
 
     //constructor
-    public CassandraTable( String keyspaceName,String tableName){
+    public CassandraTable(String keyspaceName,String tableName){
         this.tableName=tableName;
         this.keyspaceName=keyspaceName;
     }
