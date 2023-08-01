@@ -12,4 +12,8 @@ public class CassandraTable {
     public String getTableName(){
         return tableName;
     }
+
+    public String getKeyspaceName() {
+        return keyspaceName;
+    }
 }

@@ -41,7 +41,7 @@ public class Parquet {
     public static void parquetWriter(List<Map<String, Object>> mList, CassandraTable table, String fileName) {
         String tmpPath = fileName;
 
-        List<String> columns = Cassandra.getAllColumnsFromTable(table, "library");
+        List<String> columns = Cassandra.getAllColumnsFromTable(table);
         String clms = "";
         for (int i = 0; i < columns.size() - 1; i++) {
             clms += " {\"name\": \"" + columns.get(i) + "\",  \"type\": \"string\"},";
@@ -79,7 +79,7 @@ public class Parquet {
     public static String parquetReader(String filePath) throws IOException {
         List<SimpleGroup> simpleGroups = new ArrayList<>();
 
-        ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path("s3a://mytestfromjava45543/2023_07_31/sample0.parquet"), new Configuration()));
+        ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path(filePath), new Configuration()));
         MessageType schema = reader.getFooter().getFileMetaData().getSchema();
         PageReadStore pages;
         while ((pages = reader.readNextRowGroup()) != null) {

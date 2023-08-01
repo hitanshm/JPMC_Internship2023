@@ -10,12 +10,12 @@ import java.util.Iterator;
 public class Main {
     public static void main(String[] args) {
         String keyspaceName ="library";
-        ArrayList<String> tables = (ArrayList<String>) Cassandra.getTables("library");
+        ArrayList<String> tables = (ArrayList<String>) Cassandra.getTables(keyspaceName);
         for (int i = 0; i < tables.size(); i++) {
-            MultithreadingCass multitest = new MultithreadingCass(i,keyspaceName, tables.get(i));
+            Multithreading multitest = new Multithreading(i,keyspaceName, tables.get(i),"mytestfromjava45543","hitansh","hitansh");
             multitest.start();
         }
-        System.out.println("Project Successful");
+        //System.out.println("Project Successful");
         //System.exit(0);
     }
 }
