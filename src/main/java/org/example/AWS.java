@@ -18,7 +18,7 @@ import static org.example.CreateS3Folder.folderName;
 public class AWS {
 
     //creates a folder based on the data and uploads a file in that folder
-    public static void createFolderAndUploadFile(String bucket, String fileName) {
+    public void createFolderAndUploadFile(String bucket, String fileName) {
 
         String bucketName = bucket;
         String keyName = folderName + fileName;
@@ -29,6 +29,7 @@ public class AWS {
 
         PutObjectRequest request = new PutObjectRequest(bucketName, keyName, new File(filePath));
         s3Client.putObject(request);
+        System.out.println("finished creating folder and uploading file");
         //Date date = new Date();
         /*
         S3Waiter waiter = client.waiter();
@@ -47,7 +48,7 @@ public class AWS {
 */
     }
     //reads file paths in a bucket
-    public static void readFromS3(String bucketName){
+    public void readFromS3(String bucketName){
         String bucket_name = bucketName;
         System.out.format("Objects in S3 bucket %s:\n", bucket_name);
         //need to add specific region

@@ -40,10 +40,9 @@ public class Parquet {
     }
 
     //writes and uploads a parquet file to the local computer of the Cassandra data in Mlist format
-    public static void parquetWriter(List<Map<String, Object>> mList, CassandraTable table, String fileName) {
+    public void parquetWriter(List<Map<String, Object>> mList, List<String> columns, String fileName) {
         String tmpPath = fileName;
 
-        List<String> columns = Cassandra.getAllColumnsFromTable(table);
         String clms = "";
         for (int i = 0; i < columns.size() - 1; i++) {
             clms += " {\"name\": \"" + columns.get(i) + "\",  \"type\": \"string\"},";
@@ -76,10 +75,11 @@ public class Parquet {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("finished writing paqruet file");
     }
 
     //reads parquet files stored on the local computer
-    public static String parquetReader(String filePath) throws IOException {
+    public String parquetReader(String filePath) throws IOException {
         List<SimpleGroup> simpleGroups = new ArrayList<>();
 
         ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path(filePath), new Configuration()));

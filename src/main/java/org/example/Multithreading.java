@@ -54,7 +54,7 @@ public class Multithreading extends Thread{
         //stores mapped data from Cassandra in an MList
         List<Map<String, Object>> mListData= parquet.RowsToMList(allData,columns);
         //creates a file on the local computer with the data from Cassandra in Parquet format
-        parquet.parquetWriter(mListData,table,filePath);
+        parquet.parquetWriter(mListData,columns,filePath);
 
         //adds a folder with today's date and uploads the parquet file in AWS
         aws.createFolderAndUploadFile(bucketName,filePath);

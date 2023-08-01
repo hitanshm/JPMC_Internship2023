@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Json {
+    //coverts data from Cassandra in JSON format by using mapping
     public String RowsToJson(List<Row> rows, List<String> columns) {
         List<String> json = new ArrayList<>();
         for (Row row : rows) {

@@ -13,9 +13,13 @@ public class Cassandra {
     private Cluster cluster;
     private Session session;
     private CassandraTable table;
-    private static String user;
-    private static String password;
+    private String user;
+    private String password;
 
+    //constructor
+    public Cassandra(){
+
+    }
     //constructor
     public Cassandra(String user, String password){
         this.user=user;
@@ -50,15 +54,27 @@ public class Cassandra {
         session.close();
         cluster.close();
     }
+    //gets the ResultSet data of a table
+    public ResultSet getResult(CassandraTable table){
+        String query = "SELECT * FROM " + table.getTableName();
+        //Creating Cluster object
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1")
+                .withCredentials(user, password).build();
+        //Creating Session object
+        Session session = cluster.connect(table.getKeyspaceName());
+        //Getting the ResultSet
+        ResultSet result = session.execute(query);
+        return result;
+    }
     //gets all data from a cassandra table
-    public static List<Row> getAllFromTable(CassandraTable table){
+    public List<Row> getAllFromTable(CassandraTable table){
 
         ResultSet result = getResult(table);
         List<Row> allData=result.all();
         return allData;
     }
     //gets all column names in a cassandra table
-    public static List<String> getAllColumnsFromTable(CassandraTable table){
+    public List<String> getAllColumnsFromTable(CassandraTable table){
 
         ResultSet result = getResult(table);
         List<String> columnNames =
@@ -68,10 +84,11 @@ public class Cassandra {
         return columnNames;
     }
     //gets all tables within a keyspace in Cassandra
-    public static ArrayList<String> getTables(String keyspaceName){
+    public ArrayList<String> getTables(String keyspaceName){
 
         ArrayList<String> tableNames = new ArrayList<String>();
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials(user,user).build();
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1")
+                .withCredentials(user,password).build();
         Metadata metadata = cluster.getMetadata();
         for (TableMetadata t : metadata.getKeyspace(keyspaceName).getTables()) {
             tableNames.add(t.getName());
@@ -84,16 +101,6 @@ public class Cassandra {
         return tableNames;
 
     }
-    //gets the ResultSet data of a table
-    public static ResultSet getResult(CassandraTable table){
-        String query = "SELECT * FROM " + table.getTableName();
-        //Creating Cluster object
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials(user, password).build();
-        //Creating Session object
-        Session session = cluster.connect(table.getKeyspaceName());
-        //Getting the ResultSet
-        ResultSet result = session.execute(query);
-        return result;
-    }
+
 
 }
