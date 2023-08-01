@@ -53,8 +53,8 @@ public class ParquetRelated {
     public static void readParquetAWS() throws IOException {
         Path path = new Path("s3a://chetan-test-bucket-1/student/2023_07_31/data.parquet");
         Configuration conf = new Configuration();
-        conf.set("AKIAWT5JSRI4F6IGA4VZ", "KEY");
-        conf.set("FE4dnAXA18U9RJW+VAKQ544NHdfaEqYZiZ+euL2Z", "SECRET");
+        //conf.set(key)
+        //conf.set(secret key)
         conf.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem");
         conf.setBoolean("fs.s3a.path.style.access", true);
         //Following line causes error, unable to resolve
