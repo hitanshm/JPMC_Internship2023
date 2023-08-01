@@ -114,7 +114,7 @@ public class KeyspaceRepository {
     public ResultSet getAllFromTable(CassandraTable table){
         String query = "SELECT * FROM " + table.getTableName();
         //Creating Cluster object
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials("hitansh", "hitansh").build();
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
         //Creating Session object
         Session session = cluster.connect("library");
         //Getting the ResultSet
