@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class LocalComputer {
-    public static void writefile(String name, List<Row> input){
+    public void writefile(String name, List<Row> input){
         try {
             FileWriter myWriter = new FileWriter(name);
             myWriter.write(input.toString());

@@ -14,22 +14,26 @@ import static org.junit.Assert.assertTrue;
 
 public class CassandraQueries {
 
-    public static KeyspaceRepository schemaRepository;
-    public static Session session;
-    public static int amtOfTables;
+    public KeyspaceRepository schemaRepository;
+    public Session session;
+    public int amtOfTables;
 
-    public static void connectToCassandraDatabase(){
+    public void connectToCassandraDatabase(){
         //Creating Cluster object
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
         //Creating Session object
-        Session session = null;
+        session = null;
         try {
             session = cluster.connect("sample_demo");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    public static List<String> getAllColumnsFromTable(String tableName, String keyspaceName){
+    public List<String> getAllColumnsFromTable(String tableName, String keyspaceName){
+        CassandraConnector client = new CassandraConnector();
+        client.connect("127.0.0.1", 9042);
+        session = client.getSession();
+
         System.out.println("Get all collumns from table " + tableName);
         String query = "SELECT * FROM " + keyspaceName + "." + tableName;
 
@@ -44,7 +48,7 @@ public class CassandraQueries {
         return columnNames;
     }
 
-    public static List<Row> getAllRowsFromTable(String tableName, List<String> collumnNames, String keyspaceName){
+    public List<Row> getAllRowsFromTable(String tableName, List<String> collumnNames, String keyspaceName){
         System.out.println("Get all rows from table " + tableName);
         String query = "SELECT * FROM " + keyspaceName + "." + tableName;
 
@@ -59,7 +63,7 @@ public class CassandraQueries {
 
     }
 
-    public static void whenCreatingAKeyspace_thenCreated() {
+    public void whenCreatingAKeyspace_thenCreated() {
 
 
         CassandraConnector client = new CassandraConnector();

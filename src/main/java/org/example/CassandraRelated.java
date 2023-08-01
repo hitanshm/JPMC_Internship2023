@@ -10,10 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CassandraRelated {
-    public static KeyspaceRepository schemaRepository;
-    public static Session session;
-    public static int amtOfTables;
-    public static List getTables(String keyspaceName2){
+    public KeyspaceRepository schemaRepository;
+    public Session session;
+    public int amtOfTables;
+    public List getTables(String keyspaceName2){
 
         List table_names = new ArrayList();
 
@@ -35,7 +35,7 @@ public class CassandraRelated {
 
     }
 
-    public static void connect() {
+    public void connect() {
         //String hello = "Hello";
         CassandraConnector client = new CassandraConnector();
         client.connect("127.0.0.1", 9042);

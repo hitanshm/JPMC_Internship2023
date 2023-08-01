@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class CassandraConnectionToS3 {
-    public static void storeFileInS3(String bucketName, String keyName, String filePath){
+    public void storeFileInS3(String bucketName, String keyName, String filePath){
 
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
         System.out.println(bucketName + " is the bucket name");
@@ -27,17 +27,18 @@ public class CassandraConnectionToS3 {
         com.amazonaws.services.s3.model.PutObjectRequest request = new com.amazonaws.services.s3.model.PutObjectRequest(bucketName, keyName, new File(filePath));
         s3Client.putObject(request);
     }
-    public static void connectAndStoreDataToS3(String tableName, List<Row> allRowsData){
+    public void connectAndStoreDataToS3(String tableName, List<Row> allRowsData){
         //Store the data in a file in local computer
         //Only temporary but later, don't store in file; instead, directly transfer data in memory to S3
         String folderPath = "C:\\JPMC_Internship_2023\\";
+        LocalComputer localObj = new LocalComputer();
 
         String date = ZonedDateTime.now( ZoneId.systemDefault() ).format( DateTimeFormatter.ofPattern( "uuuu_MM_dd" ) );
 
         String folderName = tableName + "/" + date + "/";
         String bucketName = "chetan-test-bucket-1";
         String filePath = folderPath + tableName + ".txt";
-        LocalComputer.writefile(filePath, allRowsData);
+        localObj.writefile(filePath, allRowsData);
 
 
         S3Client client = S3Client.builder().build();

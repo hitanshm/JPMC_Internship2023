@@ -8,6 +8,10 @@ public class Testing {
     //Run this file
 
     public void parallelProcessing(){
+        ParquetRelated parquetObject = new ParquetRelated();
+        CassandraRelated cassandraRelatedObj = new CassandraRelated();
+        CassandraQueries cassandraQueryObj = new CassandraQueries();
+        StoreInS3 s3StorageObj = new StoreInS3();
         int batchsize = 1;
         ExecutorService executorService = Executors.newFixedThreadPool(batchsize);
         List<Future<String>> resultFutures = new ArrayList<>();
@@ -18,23 +22,23 @@ public class Testing {
         System.out.println("Main has ran.");
 
         //Connects to Cassandra
-        CassandraRelated.connect();
+        cassandraRelatedObj.connect();
         //Creates keyspace if hasn't already
 
-        CassandraQueries.whenCreatingAKeyspace_thenCreated();
+        cassandraQueryObj.whenCreatingAKeyspace_thenCreated();
 
         //Create list called tableArray and store table names inside list
         List<String> tableArray;
-        tableArray = CassandraRelated.getTables(keyspaceName2);
+        tableArray = cassandraRelatedObj.getTables(keyspaceName2);
 
         for (String tableName:tableArray){
 
             String fileName = "data_" + tableName;
             System.out.println("Processing next table: " + tableName);
-            Callable<String> callableTask = () -> StoreInS3.getTableDataFromCassandraAndStoreInS3(tableName, keyspaceName2);
-            List<String> Collumns = CassandraQueries.getAllColumnsFromTable(tableName, keyspaceName2);
-            List<Map<String, Object>> mList = ParquetRelated.RowsToMList(CassandraQueries.getAllRowsFromTable(tableName, Collumns, keyspaceName2), Collumns);
-            ParquetRelated.parquetWriter(mList, tableName, fileName, keyspaceName2);
+            Callable<String> callableTask = () -> s3StorageObj.getTableDataFromCassandraAndStoreInS3(tableName, keyspaceName2);
+            List<String> Collumns = cassandraQueryObj.getAllColumnsFromTable(tableName, keyspaceName2);
+            List<Map<String, Object>> mList = parquetObject.RowsToMList(cassandraQueryObj.getAllRowsFromTable(tableName, Collumns, keyspaceName2), Collumns);
+            parquetObject.parquetWriter(mList, tableName, fileName, keyspaceName2);
             resultFutures.add(executorService.submit(callableTask));
         }
 
@@ -57,11 +61,12 @@ public class Testing {
     }
 
     public static void main(String[] args) throws IOException {
+        ParquetRelated parquetObject = new ParquetRelated();
         String filePath = "C:\\Users\\cheta\\IdeaProjects\\cassandra\\data_student.parquet";
 
         Testing test = new Testing();
         test.parallelProcessing();
-        System.out.println(ParquetRelated.parquetReaderLocal(filePath));
+        System.out.println(parquetObject.parquetReaderLocal(filePath));
         System.exit(0);
 
     }

@@ -9,7 +9,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.util.List;
 
 public class ReadS3 {
-    public static void main(String[] args){
+    public void main(String[] args){
         String bucket_name = "chetan-test-bucket-1";
         System.out.format("Objects in S3 bucket %s:\n", bucket_name);
         final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_2).build();

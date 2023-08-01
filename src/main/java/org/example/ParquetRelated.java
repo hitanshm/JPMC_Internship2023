@@ -50,7 +50,7 @@ public class ParquetRelated {
 
     //Unused, but can be experimented with
     //Reading parquet file from AWS
-    public static void readParquetAWS() throws IOException {
+    public void readParquetAWS() throws IOException {
         Path path = new Path("s3a://chetan-test-bucket-1/student/2023_07_31/data.parquet");
         Configuration conf = new Configuration();
         //conf.set(key)
@@ -69,7 +69,7 @@ public class ParquetRelated {
     }
 
     //Reading local parquet file
-    public static String parquetReaderLocal(String filePath) throws IOException {
+    public String parquetReaderLocal(String filePath) throws IOException {
         List<SimpleGroup> simpleGroups = new ArrayList<>();
         ParquetFileReader reader = ParquetFileReader.open(HadoopInputFile.fromPath(new Path(filePath), new Configuration()));
         MessageType schema = reader.getFooter().getFileMetaData().getSchema();
@@ -90,7 +90,7 @@ public class ParquetRelated {
 
     }
 
-    public static List<Map<String, Object>> RowsToMList(List<Row> rows, List<String> columns) {
+    public List<Map<String, Object>> RowsToMList(List<Row> rows, List<String> columns) {
         List<Map<String, Object>> mList = new ArrayList<>();
         for (Row row : rows) {
             HashMap<String, Object> map = new HashMap<>();
@@ -104,8 +104,9 @@ public class ParquetRelated {
 
 
 
-    public static void parquetWriter(List<Map<String, Object>> mList, String table, String fileName, String keyspaceName) {
+    public void parquetWriter(List<Map<String, Object>> mList, String table, String fileName, String keyspaceName) {
         String tmpPath = fileName+".parquet";
+        CassandraQueries cassandraQueryObj = new CassandraQueries();
 
         String schemaJson = "{\"namespace\": \"org.myorganization.mynamespace\"," //Not used in Parquet, can put anything
                 + "\"type\": \"record\"," //Must be set as record
@@ -115,7 +116,7 @@ public class ParquetRelated {
                 + ", {\"name\": \"balance\", \"type\": \"string\"}" //Required field
                 + ", {\"name\": \"name\", \"type\": \"string\"}"
                 + " ]}";
-        List<String> columns = CassandraQueries.getAllColumnsFromTable(table, keyspaceName);
+        List<String> columns = cassandraQueryObj.getAllColumnsFromTable(table, keyspaceName);
         String clms="";
         for(int i=0;i< columns.size()-1;i++) {
             clms+=" {\"name\": \""+columns.get(i)+"\",  \"type\": \"string\"},";
