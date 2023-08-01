@@ -35,7 +35,7 @@ public class Multithreading extends Thread{
 
         //initializing objects
         CassandraTable table = new CassandraTable(keyspaceName,tableName);
-        Cassandra cassandra = new Cassandra(session, table,cassandraUser, cassandraPassword);
+        Cassandra cassandra = new Cassandra(session, table, cassandraUser, cassandraPassword);
         Json json = new Json();
         AWS aws = new AWS();
         Parquet parquet = new Parquet();
@@ -57,7 +57,7 @@ public class Multithreading extends Thread{
         parquet.parquetWriter(mListData,table,filePath);
 
         //adds a folder with today's date and uploads the parquet file in AWS
-        aws.createFolder(bucketName,filePath);
+        aws.createFolderAndUploadFile(bucketName,filePath);
         //reads files in AWS
         aws.readFromS3(bucketName);
 

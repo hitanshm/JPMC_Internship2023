@@ -16,7 +16,9 @@ import java.util.List;
 import static org.example.CreateS3Folder.folderName;
 
 public class AWS {
-    public static void createFolder(String bucket, String fileName) {
+
+    //creates a folder based on the data and uploads a file in that folder
+    public static void createFolderAndUploadFile(String bucket, String fileName) {
 
         String bucketName = bucket;
         String keyName = folderName + fileName;
@@ -44,6 +46,7 @@ public class AWS {
         String parquetKeyName = folderName + "sample1.parquet";
 */
     }
+    //reads file paths in a bucket
     public static void readFromS3(String bucketName){
         String bucket_name = bucketName;
         System.out.format("Objects in S3 bucket %s:\n", bucket_name);

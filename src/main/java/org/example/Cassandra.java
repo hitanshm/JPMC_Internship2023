@@ -15,6 +15,13 @@ public class Cassandra {
     private CassandraTable table;
     private static String user;
     private static String password;
+
+    //constructor
+    public Cassandra(String user, String password){
+        this.user=user;
+        this.password=password;
+    }
+    //constructor
     public Cassandra(Session session, CassandraTable table, String user, String password){
         this.session=session;
         this.table=table;
@@ -43,39 +50,41 @@ public class Cassandra {
         session.close();
         cluster.close();
     }
+    //gets all data from a cassandra table
     public static List<Row> getAllFromTable(CassandraTable table){
 
         ResultSet result = getResult(table);
         List<Row> allData=result.all();
         return allData;
     }
+    //gets all column names in a cassandra table
     public static List<String> getAllColumnsFromTable(CassandraTable table){
+
         ResultSet result = getResult(table);
         List<String> columnNames =
-                result.getColumnDefinitions().asList().stream()
+            result.getColumnDefinitions().asList().stream()
                         .map(cl -> cl.getName())
                         .collect(Collectors.toList());
         return columnNames;
     }
-    public static List getTables(String keyspaceName){
+    //gets all tables within a keyspace in Cassandra
+    public static ArrayList<String> getTables(String keyspaceName){
 
-        List tableNames = new ArrayList();
-
-        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials(user, password).build();
+        ArrayList<String> tableNames = new ArrayList<String>();
+        Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").withCredentials(user,user).build();
         Metadata metadata = cluster.getMetadata();
-
         for (TableMetadata t : metadata.getKeyspace(keyspaceName).getTables()) {
             tableNames.add(t.getName());
-
         }
-        int numOfTables = tableNames.size();
 
+        int numOfTables = tableNames.size();
         System.out.println("Table names: " + tableNames);
         System.out.println("Total table count: " + numOfTables);
 
         return tableNames;
 
     }
+    //gets the ResultSet data of a table
     public static ResultSet getResult(CassandraTable table){
         String query = "SELECT * FROM " + table.getTableName();
         //Creating Cluster object

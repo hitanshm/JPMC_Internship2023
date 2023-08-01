@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Parquet {
+    //converts data from Cassandra to MList
     public List<Map<String, Object>> RowsToMList(List<Row> rows, List<String> columns) {
         List<Map<String, Object>> mList = new ArrayList<>();
         for (Row row : rows) {
@@ -38,6 +39,7 @@ public class Parquet {
         return mList;
     }
 
+    //writes and uploads a parquet file to the local computer of the Cassandra data in Mlist format
     public static void parquetWriter(List<Map<String, Object>> mList, CassandraTable table, String fileName) {
         String tmpPath = fileName;
 
@@ -76,6 +78,7 @@ public class Parquet {
         }
     }
 
+    //reads parquet files stored on the local computer
     public static String parquetReader(String filePath) throws IOException {
         List<SimpleGroup> simpleGroups = new ArrayList<>();
 
