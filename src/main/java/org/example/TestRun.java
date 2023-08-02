@@ -24,6 +24,6 @@ public class TestRun {
             multitest.start();
         }
         //System.out.println("Project Successful");
-        //System.exit(0);
+
     }
 }
