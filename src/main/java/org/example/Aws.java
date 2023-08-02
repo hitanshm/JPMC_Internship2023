@@ -1,6 +1,7 @@
 package org.example;
 
 import com.amazonaws.regions.Regions;
+import static com.amazonaws.regions.Regions.*;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
@@ -30,29 +31,13 @@ public class Aws {
         PutObjectRequest request = new PutObjectRequest(bucketName, keyName, new File(filePath));
         s3Client.putObject(request);
         System.out.println("finished creating folder and uploading file");
-        //Date date = new Date();
-        /*
-        S3Waiter waiter = client.waiter();
-        HeadObjectRequest requestWait = HeadObjectRequest.builder()
-                .bucket(bucketName).key(folderName).build();
-
-        WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectExists(requestWait);
-
-        waiterResponse.matched().response().ifPresent(System.out::println);
-
-        System.out.println("Folder " + folderName + " is ready.");
-
-        //Writing the file content into S3
-        String parquetFilePath = "sample1.parquet";
-        String parquetKeyName = folderName + "sample1.parquet";
-*/
     }
     //reads file paths in a bucket
-    public void readFromS3(String bucketName){
+    public void readFromS3(String bucketName, String region){
         String bucket_name = bucketName;
         System.out.format("Objects in S3 bucket %s:\n", bucket_name);
         //need to add specific region
-        final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_2).build();
+        final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.valueOf(region)).build();
         ListObjectsV2Result result = s3.listObjectsV2(bucket_name);
         List<S3ObjectSummary> objects = result.getObjectSummaries();
         for (S3ObjectSummary os : objects) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 public class DataProcessor extends Thread{
     private ArrayList<String> tableNames = new ArrayList<String>();
     private int threadNumber;
@@ -60,7 +61,7 @@ public class DataProcessor extends Thread{
         //adds a folder with today's date and uploads the parquet file in AWS
         aws.createFolderAndUploadFile(bucketName,filePath);
         //reads files in AWS
-        aws.readFromS3(bucketName);
+        aws.readFromS3(bucketName,"US_EAST_2");
 
         //reads parquet data from the local computer file (that was uploaded to AWS)
         try {
