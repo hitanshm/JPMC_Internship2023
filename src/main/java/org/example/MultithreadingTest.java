@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class MultithreadingTest extends Thread {
     private int threadNumber;
     private String tableName;
-    public MultithreadingTest(int threadNum, String tableNm){
+    public MultithreadingTest(int threadNum, String tableNm, String s){
         threadNumber=threadNum;
         tableName=tableNm;
     }
