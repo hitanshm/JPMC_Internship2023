@@ -23,7 +23,7 @@ public class TestRun {
             MultithreadingTest multitest = new MultithreadingTest(i,keyspaceName, table_names.get(i));
             multitest.start();
         }
-        //System.out.println("Project Successful");
+
 
     }
 }
