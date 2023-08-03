@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Parquet {
-    //converts data from Cassandra to MList
+    //converts data from Cassandra to MList as we need columns for parquet writer
     public List<Map<String, Object>> RowsToMList(List<Row> rows, List<String> columns) {
         List<Map<String, Object>> mList = new ArrayList<>();
         for (Row row : rows) {
@@ -61,7 +61,6 @@ public class Parquet {
                 .withSchema(schema)
                 .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
                 .build()) {
-            List<GenericData.Record> recordList = new ArrayList<>();
             GenericData.Record record = new GenericData.Record(schema);
             mList.forEach((d) -> {
                 try {
