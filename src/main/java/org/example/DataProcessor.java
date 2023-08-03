@@ -2,14 +2,11 @@ package org.example;
 import com.datastax.driver.core.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 public class DataProcessor extends Thread{
-    private ArrayList<String> tableNames = new ArrayList<String>();
-    private int threadNumber;
     private String keyspaceName;
     private String tableName;
     private Session session;
@@ -20,8 +17,7 @@ public class DataProcessor extends Thread{
     private String region;
     //change class name
 
-    public DataProcessor(int threadNumber, String keyspaceName, String tableName, String bucketName,String region, String cassandraUser, String cassandraPassword){
-        this.threadNumber=threadNumber;
+    public DataProcessor(String keyspaceName, String tableName, String bucketName,String region, String cassandraUser, String cassandraPassword){
         this.keyspaceName=keyspaceName;
         this.tableName=tableName;
         this.bucketName=bucketName;
@@ -53,8 +49,8 @@ public class DataProcessor extends Thread{
         System.out.println(json.RowsToJson(allData,columns));
 
         //defines filepath of parquet file
-        //It includes the thread Number so that different tables have separate files
-        String filePath =tableName+"_data_"+threadNumber+".parquet";
+        //it includes the table name so that different tables have separate files and it rewrites the file if called multiple times
+        String filePath = tableName+"_data.parquet";
         //stores mapped data from Cassandra in an MList
         List<Map<String, Object>> mListData= parquet.RowsToMList(allData,columns);
         //creates a file on the local computer with the data from Cassandra in Parquet format

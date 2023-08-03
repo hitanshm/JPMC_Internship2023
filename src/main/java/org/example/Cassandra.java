@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 public class Cassandra {
     private static String keyspaceName;
     private static String tableName;
-    private Cluster cluster;
     private Session session;
     private CassandraTable table;
     private String user;
