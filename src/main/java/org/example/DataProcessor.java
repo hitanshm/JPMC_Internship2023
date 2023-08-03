@@ -17,13 +17,15 @@ public class DataProcessor extends Thread{
     private String bucketName;
     private String cassandraUser;
     private String cassandraPassword;
+    private String region;
     //change class name
 
-    public DataProcessor(int threadNumber, String keyspaceName, String tableName, String bucketName, String cassandraUser, String cassandraPassword){
+    public DataProcessor(int threadNumber, String keyspaceName, String tableName, String bucketName,String region, String cassandraUser, String cassandraPassword){
         this.threadNumber=threadNumber;
         this.keyspaceName=keyspaceName;
         this.tableName=tableName;
         this.bucketName=bucketName;
+        this.region=region;
         this.cassandraUser=cassandraUser;
         this.cassandraPassword=cassandraPassword;
     }
@@ -61,7 +63,7 @@ public class DataProcessor extends Thread{
         //adds a folder with today's date and uploads the parquet file in AWS
         aws.createFolderAndUploadFile(bucketName,filePath);
         //reads files in AWS
-        aws.readFromS3(bucketName,"US_EAST_2");
+        aws.readFromS3(bucketName,region);
 
         //reads parquet data from the local computer file (that was uploaded to AWS)
         try {

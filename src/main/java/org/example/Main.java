@@ -14,13 +14,13 @@ public class Main {
         String cassandraUser="hitansh";
         String cassandraPassword="hitansh";
         String awsBucketName="mytestfromjava45543";
+        String region ="US_EAST_2";
         Cassandra cassandra = new Cassandra(cassandraUser,cassandraPassword);
         ArrayList<String> tables;
         tables = cassandra.getTables(keyspaceName);
         for (int i = 0; i < tables.size(); i++) {
-            DataProcessor multithreading = new DataProcessor(i,keyspaceName, tables.get(i),awsBucketName,cassandraUser,cassandraPassword);
+            DataProcessor multithreading = new DataProcessor(i,keyspaceName, tables.get(i),awsBucketName,region,cassandraUser,cassandraPassword);
             multithreading.start();
         }
-
     }
 }
